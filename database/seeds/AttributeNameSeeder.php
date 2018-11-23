@@ -2,6 +2,7 @@
 
 use App\AttributeName;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class AttributeNameSeeder extends Seeder
 {

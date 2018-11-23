@@ -20,7 +20,7 @@ class MonsterController extends Controller
      */
     public function index()
     {
-        //
+        return response(null, 404);
     }
 
     /**
@@ -31,54 +31,61 @@ class MonsterController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        return response(null, 404);
     }
 
-	
-	public function initQuery($str) {
-		$arr = explode(',', str_replace(' ','',strtolower($str)));
-		$orderList = [];
-		$filterList = [];
-		$filterPriceRange = [];
-		$filterPrice = false;
-		foreach($arr as $v) {
-			if(intval($v) == 0) {
-				$orderList[] = trim($v);
-			} else {
-				$filterList[] = intval($v);
-			}
-		}
-		$preQuery = MonsterAttributes::query();
-		if(count($filterList) != 0) $preQuery = $preQuery->whereIn('AttributeID', $filterList);
-		$preQuery = $preQuery->select('MonsterId')->distinct();
-		$monQuery = Monsters::query()
-		->joinSub($preQuery,'MonsterAttributes', 
-				'Monsters.id', '=', 'MonsterAttributes.MonsterId');		
-		foreach($orderList as $v) {
-			if($v == 'newest') {
-				$monQuery = $monQuery->orderBy('Monsters.created_at', 'DESC');
-			} else if($v == 'cheapest') {
-				$monQuery = $monQuery->orderBy(DB::raw('Monsters.price * Monsters.discount / 100'), 'ASC');
-			} else if($v == 'hottest') {
-				$monQuery = $monQuery->orderBy('Monsters.sold', 'DESC');
-			} else if(strpos($v, 'price') === 0) {
-				$filterPriceRange = explode('-', substr($v, 6));
-				$filterPrice = sort($filterPriceRange, SORT_NUMERIC) && (count($filterPriceRange) == 2);
-			}
-		}
-		if($filterPrice) {
-			$monQuery = $monQuery->whereBetween('price', $filterPriceRange);
-		}
-		return $monQuery;
-	}
+
+    /**
+     * @param string $str
+     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder
+     */
+    public function initQuery($str)
+    {
+        $arr = explode(',', str_replace(' ', '', strtolower($str)));
+        $orderList = [];
+        $filterList = [];
+        $filterPriceRange = [];
+        $filterPrice = false;
+        foreach ($arr as $v) {
+            if (intval($v) == 0) {
+                $orderList[] = trim($v);
+            } else {
+                $filterList[] = intval($v);
+            }
+        }
+        $preQuery = MonsterAttributes::query();
+        if (count($filterList) != 0) $preQuery = $preQuery->whereIn('AttributeID', $filterList);
+        $preQuery = $preQuery->select('MonsterId')->distinct();
+        $monQuery = Monsters::query()
+            ->joinSub($preQuery, 'MonsterAttributes',
+                'Monsters.id', '=', 'MonsterAttributes.MonsterId');
+        foreach ($orderList as $v) {
+            if ($v == 'newest') {
+                $monQuery = $monQuery->orderBy('Monsters.created_at', 'DESC');
+            } else if ($v == 'cheapest') {
+                $monQuery = $monQuery->orderBy(DB::raw('Monsters.price * Monsters.discount / 100'), 'ASC');
+            } else if ($v == 'hottest') {
+                $monQuery = $monQuery->orderBy('Monsters.sold', 'DESC');
+            } else if (strpos($v, 'price') === 0) {
+                $filterPriceRange = explode('-', substr($v, 6));
+                $filterPrice = sort($filterPriceRange, SORT_NUMERIC) && (count($filterPriceRange) == 2);
+            }
+        }
+        if ($filterPrice) {
+            $monQuery = $monQuery->whereBetween('price', $filterPriceRange);
+        }
+        return $monQuery;
+    }
+
     /**
      * Display the specified resource.
      *
+     * @param  string $fsStr
      * @param  int $startId
      * @param  int $endId
-     * @return \Illuminate\Http\Response
+     * @return array $data
      */
-    public function show($fsStr = '*', $startId = '0', $endId = '0')
+    public function show($fsStr = '*', $startId = 0, $endId = 0)
     {
         $startId = intval($startId);
         $endId = intval($endId);
@@ -89,12 +96,12 @@ class MonsterController extends Controller
         $mon = $this->initQuery($fsStr)->skip($startId)
             ->take($endId - $startId + 1)
             ->join('MonsterName', 'monsters.id', '=', 'monstername.id')
-			->select('MonsterName.*','Monsters.*')
+            ->select('MonsterName.*', 'Monsters.*')
             ->get();
         foreach ($mon as $i) {
             $attr = MonsterAttributes::where('MonsterId', $i['id'])
-			->join('AttributeName', 'AttributeName.id', '=', 'MonsterAttributes.AttributeID')
-			->get();
+                ->join('AttributeName', 'AttributeName.id', '=', 'MonsterAttributes.AttributeID')
+                ->get();
             $result = [
                 'ATTACK' => $i['ATTACK'],
                 'DEFENSE' => $i['DEFENSE'],
@@ -137,7 +144,7 @@ class MonsterController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        return response(null, 404);
     }
 
     /**
@@ -148,28 +155,6 @@ class MonsterController extends Controller
      */
     public function destroy($id)
     {
-        //
+        return response(null, 404);
     }
-	
-	public function test()
-	{
-		$width = 500; $height = 500;
-		$imageCreateFunc = [
-			1 => 'imagecreatefromgif',
-			2 => 'imagecreatefromjpeg',
-			3 => 'imagecreatefrompng'
-		];
-		$url = public_path('img\tafe-brisbane.png');
-		$imageInfo = getimagesize($url);
-		if(!array_key_exists($imageInfo[2], $imageCreateFunc)) {
-			return response('Image Not Found', 404);
-		}
-		$file = $imageCreateFunc[$imageInfo[2]]($url);
-		$image = imagecreate($width, $height);
-		imagecopy($image, $file, 0, 0, 0, 0, $width, $height);
-		imagepng($image);
-		imagedestroy($image);
-		return $imageInfo;
-		//return resopnse()->header('Content-Type', IMAGETYPE_PNG);
-	}
 }

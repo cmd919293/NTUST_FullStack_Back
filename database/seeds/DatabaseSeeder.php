@@ -16,5 +16,6 @@ class DatabaseSeeder extends Seeder
         $this->call(AttributeNameSeeder::class);
         $this->call(MonsterAttributesSeeder::class);
         $this->call(MonsterNameSeeder::class);
+        $this->call(CartSeeder::class);
     }
 }

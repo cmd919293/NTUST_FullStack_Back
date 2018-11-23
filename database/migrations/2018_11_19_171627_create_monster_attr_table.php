@@ -15,8 +15,8 @@ class CreateMonsterAttrTable extends Migration
     {
         Schema::create('MonsterAttributes', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('MonsterID');
-            $table->integer('AttributeID');
+            $table->unsignedInteger('MonsterID');
+            $table->unsignedInteger('AttributeID');
             $table->timestamps();
         });
     }

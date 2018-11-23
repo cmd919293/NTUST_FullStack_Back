@@ -2,6 +2,7 @@
 
 use App\MonsterAttributes;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class MonsterAttributesSeeder extends Seeder
 {

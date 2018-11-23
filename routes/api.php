@@ -15,9 +15,17 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+Route::post('register', 'api\AuthController@register');
+Route::post('login', 'api\AuthController@login');
+// Route::post('reset', 'api\AuthController@resetPwd');
+// Route::get('test/{token}', 'api\AuthController@test');
+// Route::post('forgetPwd', 'api\AuthController@forgetPwd');
+Route::middleware('auth:api')->group(function () {
+    Route::get('user', 'api\AuthController@me');
+    Route::get('refresh', 'api\AuthController@refresh');
+    Route::get('logout', 'api\AuthController@logout');
 });
+
 
 Route::get('GetMonsters//{StartIndex}/{EndIndex}', function ($startId, $endId) {
     return Redirect::to("GetMonsters/*/$startId/$endId");
@@ -30,6 +38,7 @@ Route::prefix('GetMonsters')->group(function () {
         ->where(['StartIndex' => '[0-9]+', 'EndIndex' => '[0-9]+'])
         ->name('GetMonsters');
 });
+
 Route::prefix('Image')->group(function () {
     Route::get('{size}/{monId}/', function ($size, $monId) {
         return Redirect::to("Image/$size/$size/$monId/0");
@@ -38,4 +47,8 @@ Route::prefix('Image')->group(function () {
         return Redirect::to("Image/$size/$size/$monId/$imgId");
     });
     Route::get('{width}/{height}/{monId}/{imgId}', 'api\ImageController@show');
+});
+
+Route::middleware('auth:api')->group(function () {
+    Route::get('GetCart', 'api\CartController@index');
 });

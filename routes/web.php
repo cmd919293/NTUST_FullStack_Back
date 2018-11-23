@@ -43,4 +43,5 @@ Route::prefix('Image')->group(function () {
     });
     Route::get('{width}/{height}/{monId}/{imgId}', 'api\ImageController@show');
 });
-Route::get('test', 'api\MonsterController@test');
+
+Route::get('GetCart', 'api\CartController@index');

@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
 
@@ -17,15 +16,13 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('register', 'api\AuthController@register');
 Route::post('login', 'api\AuthController@login');
-// Route::post('reset', 'api\AuthController@resetPwd');
-// Route::get('test/{token}', 'api\AuthController@test');
-// Route::post('forgetPwd', 'api\AuthController@forgetPwd');
+Route::post('forgetPwd', 'api\AuthController@forgetPwd');
+Route::post('reset', 'api\AuthController@resetPwd');
 Route::middleware('auth:api')->group(function () {
     Route::get('user', 'api\AuthController@me');
     Route::get('refresh', 'api\AuthController@refresh');
     Route::get('logout', 'api\AuthController@logout');
 });
-
 
 Route::get('GetMonsters//{StartIndex}/{EndIndex}', function ($startId, $endId) {
     return Redirect::to("GetMonsters/*/$startId/$endId");

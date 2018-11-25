@@ -22,7 +22,7 @@ class CartSeeder extends Seeder
             return $v['id'];
         }, User::query()->select('id')->get()->toArray());
         $initCount = rand(10, 100);
-        while ($initCount--) {
+        while (count($userIdArray) && $initCount--) {
             Cart::create([
                 'UserId' => $userIdArray[rand(0, count($userIdArray) - 1)],
                 'ProductId' => $monIdArray[rand(0, count($monIdArray) - 1)],

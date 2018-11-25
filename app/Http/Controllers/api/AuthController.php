@@ -4,9 +4,9 @@ namespace App\Http\Controllers\api;
 
 use App\PasswordResets;
 use App\User;
-use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
@@ -29,7 +29,7 @@ class AuthController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => $validator->getMessageBag()
-            ]);
+            ], 400);
         }
         User::create([
             'name' => $request->input('name'),
@@ -48,15 +48,21 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
-        $credentials = request(['email', 'password']);
-        if ($request->has('password') && $request->has('email')) {
-            if (!$token = auth('api')->attempt($credentials)) {
-                return response()->json(['error' => 'Unauthorized'], 401);
-            }
-            return $this->respondWithToken($token);
-        } else {
-            return response()->json(['error' => 'Bad Request'], 400);
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|string|exists:users',
+            'password' => 'required|string|min:6'
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => $validator->getMessageBag()
+            ], 400);
         }
+        $credentials = request(['email', 'password']);
+        if (!$token = auth('api')->attempt($credentials)) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+        return $this->respondWithToken($token);
     }
 
     /**
@@ -65,38 +71,6 @@ class AuthController extends Controller
     public function me()
     {
         return response()->json(auth('api')->user());
-    }
-
-    /**
-     * @param Request $request
-     * @return JsonResponse
-     */
-    public function forgetPwd(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255|exists:users',
-            'email' => 'required|string|email|max:255|exists:users'
-        ]);
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => false,
-                'message' => $validator->getMessageBag()
-            ]);
-        }
-        $timeStr = time();
-        $md5Str = md5($timeStr);
-        $user = User::query()->where('name', $request['name'])->where('email', $request['email'])->get();
-        User::where('name', $request['name'])
-            ->where('email', $request['email'])
-            ->update(['remember_token' => $timeStr]);
-        PasswordResets::create([
-            'email' => $request['email'],
-            'token' => $md5Str
-        ]);
-        return response()->json([
-            'status' => true,
-            'token' => $md5Str
-        ]);
     }
 
     /**
@@ -129,9 +103,54 @@ class AuthController extends Controller
         ]);
     }
 
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function forgetPwd(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255|exists:users',
+            'email' => 'required|string|email|max:255|exists:users'
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => $validator->getMessageBag()
+            ], 400);
+        }
+        $user = User::query()->where([
+            'name' => $request['name'],
+            'email' => $request['email']
+        ])->get();
+        if ($user->isEmpty()) {
+            return response()->json([
+                'status' => false,
+                'message' => [
+                    'User' => 'Not Found'
+                ]
+            ], 404);
+        }
+        $url = $request->header('origin', 'http://127.0.0.1');
+        $token = md5(time());
+        PasswordResets::query()->create([
+            'token' => $token,
+            'email' => $request['email']
+        ]);
+        $url .= "/reset/$token";
+        //sent mail
+        return response()->json([
+            'status' => true,
+            'message' => [
+                'URL' => $url
+            ]
+        ], 200);
+    }
+
     public function resetPwd(Request $request)
     {
         $validator = Validator::make($request->all(), [
+            'email' => 'required|string|exists:password_resets',
             'token' => 'required|string|exists:password_resets',
             'password' => 'required|string|min:6',
             'confirm_password' => 'required|same:password',
@@ -140,23 +159,31 @@ class AuthController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => $validator->getMessageBag()
-            ]);
+            ], 400);
         }
-        $email = PasswordResets::where('token', $request['token'])->select('email')->get()[0]['email'];
-        $timeStr = User::where('email', $email)->select('remember_token')->get()[0]->getAttributes();
-        return $timeStr;
-    }
-
-    public function test($token)
-    {
-        $validator = Validator::make(['email' => $token], [
-            'email' => 'required|string|email|max:255|exists:users'
-        ]);
-        if ($validator->fails()) {
+        $record = PasswordResets::query()->where([
+            'email' => $request['email'],
+            'token' => $request['token']
+        ])->where(DB::raw('TIMESTAMPDIFF(SECOND,`created_at`,now())'), '<', 600);
+        if ($record->get()->isEmpty()) {
             return response()->json([
                 'status' => false,
-                'message' => $validator->getMessageBag()
-            ]);
+                'message' => [
+                    'token' => 'Not Found or Expired'
+                ]
+            ], 404);
         }
+        $record->delete();
+        User::query()->where([
+            'email' => $request['email']
+        ])->update([
+            'password' => Hash::make($request['password'])
+        ]);
+        return response()->json([
+            'status' => true,
+            'message' => [
+                'password' => 'Reset Success'
+            ]
+        ]);
     }
 }

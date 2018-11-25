@@ -6,8 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class PasswordResets extends Model
 {
+
     protected $fillable = [
-        'email'
+        'email',
+        'token',
     ];
     protected $table = "password_resets";
 }

@@ -60,9 +60,17 @@ class AuthController extends Controller
         }
         $credentials = request(['email', 'password']);
         if (!$token = auth('api')->attempt($credentials)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return response()->json([
+                'status' => false,
+                'message' => [
+                    'error' => 'Unauthorized'
+                ]
+            ], 401);
         }
-        return $this->respondWithToken($token);
+        return response()->json([
+            'status' => true,
+            'message' => $this->respondWithToken($token)
+        ], 200);
     }
 
     /**
@@ -87,20 +95,23 @@ class AuthController extends Controller
      */
     public function refresh()
     {
-        return $this->respondWithToken(auth('api')->refresh());
+        return response()->json([
+            'status' => true,
+            'message' => $this->respondWithToken(auth('api')->refresh())
+        ], 200);
     }
 
     /**
      * @param $token
-     * @return JsonResponse
+     * @return array
      */
     protected function respondWithToken($token)
     {
-        return response()->json([
-            'access_token' => $token,
-            'token_type' => 'bearer',
+        return [
+            'token' => $token,
+            'type' => 'bearer',
             'expires_in' => auth('api')->factory()->getTTL() * 60
-        ]);
+        ];
     }
 
     /**

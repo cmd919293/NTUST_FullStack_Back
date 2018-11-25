@@ -34,7 +34,6 @@ class MonsterController extends Controller
         return response(null, 404);
     }
 
-
     /**
      * @param string $str
      * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder
@@ -69,6 +68,9 @@ class MonsterController extends Controller
             } else if (strpos($v, 'price') === 0) {
                 $filterPriceRange = explode('-', substr($v, 6));
                 $filterPrice = sort($filterPriceRange, SORT_NUMERIC) && (count($filterPriceRange) == 2);
+            } else if (strpos($v, 'id') === 0) {
+                $id = intval(substr($v, 3));
+                $monQuery = $monQuery->where(DB::raw('`monsters`.`id`'), $id);
             }
         }
         if ($filterPrice) {

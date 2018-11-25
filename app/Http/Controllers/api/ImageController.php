@@ -11,16 +11,12 @@ use Illuminate\Support\Facades\File;
 class ImageController extends Controller
 {
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
+     * @param int $drawW
+     * @param int $drawH
+     * @param int $fileW
+     * @param int $fileH
+     * @return array
      */
-    public function store(Request $request)
-    {
-        return response(null, 200);
-    }
-
     public function resize($drawW, $drawH, $fileW, $fileH)
     {
         $nw = 0;
@@ -78,29 +74,6 @@ class ImageController extends Controller
         imagedestroy($file);
         imagepng($image);
         imagedestroy($image);
-        return response(null, 200);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @param  int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        return response(null, 200);
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
         return response(null, 200);
     }
 }

@@ -28,6 +28,9 @@ Route::get('GetMonsters//{StartIndex}/{EndIndex}', function ($startId, $endId) {
     return Redirect::to("GetMonsters/*/$startId/$endId");
 });
 Route::prefix('GetMonsters')->group(function () {
+    Route::get('{index}', function ($index) {
+        return Redirect::to("GetMonsters/id:$index/0/0");
+    });
     Route::get('{StartIndex}/{EndIndex}', function ($startId, $endId) {
         return Redirect::to("GetMonsters/*/$startId/$endId");
     });
@@ -48,4 +51,7 @@ Route::prefix('Image')->group(function () {
 
 Route::middleware('auth:api')->group(function () {
     Route::get('GetCart', 'api\CartController@index');
+    Route::post('UpdateCart', 'api\CartController@update');
+    Route::post('MakeOrder', 'api\CartController@store');
+    Route::get('GetOrders', 'api\OrderController@index');
 });

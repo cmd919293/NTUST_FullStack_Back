@@ -16,7 +16,7 @@ class CreateOrderTable extends Migration
         Schema::create('Order', function (Blueprint $table) {
             $table->increments('id');
             $table->string('Address');
-            $table->boolean('Shipment');
+            $table->boolean('Shipment')->default(false);
             $table->timestamps();
         });
     }

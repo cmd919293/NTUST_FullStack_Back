@@ -3,9 +3,14 @@
 namespace App\Http\Controllers\api;
 
 use App\Cart;
+use App\Monsters;
+use App\Order;
+use App\OrderItem;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class CartController extends Controller
 {
@@ -23,13 +28,15 @@ class CartController extends Controller
                 ->get();
             return response([
                     'status' => true,
+                    'message' => [],
                     'cart' => $result]
                 , 200);
         } else {
             return response([
                 'status' => false,
-                'cart' => []],
-                403);
+                'message' => [],
+                'cart' => []
+            ], 403);
         }
     }
 
@@ -41,46 +48,114 @@ class CartController extends Controller
      */
     public function store(Request $request)
     {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
+        $validator = Validator::make($request->all(), [
+            'Address' => 'required|string'
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => $validator->getMessageBag()
+            ], 400);
+        }
+        $cart = Cart::query()
+            ->where('UserID', auth('api')->user()->getAuthIdentifier())
+            ->select(['id', 'UserID', 'ProductID', 'Count'])
+            ->orderBy('ProductID');
+        if ($cart->get()->isEmpty()) {
+            return response()->json([
+                'status' => false,
+                'message' => [
+                    'cart' => 'Cart is Empty'
+                ]
+            ], 200);
+        }
+        $order = Order::query()->create($request->all());
+        $id = $order['id'];
+        foreach ($cart->get() as $item) {
+            $price = 0;
+            $product = Monsters::query()
+                ->where('id', $item['ProductID'])
+                ->select(DB::raw('(`price` * `discount` / 100) as discounted'))
+                ->get();
+            if ($product->isNotEmpty()) {
+                $price = $product[0]['discounted'];
+            }
+            OrderItem::query()
+                ->create(
+                    [
+                        'OrderID' => $id,
+                        'UserID' => auth('api')->user()->getAuthIdentifier(),
+                        'ProductID' => $item['ProductID'],
+                        'Count' => $item['Count'],
+                        'Price' => $price
+                    ]
+                );
+        }
+        $cart->delete();
+        return response()->json([
+            'status' => true,
+            'message' => []
+        ], 200);
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request $request
-     * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'cart' => 'required|array'
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => $validator->getMessageBag()
+            ], 400);
+        }
+        $cart = $request['cart'];
+        if (array_keys($cart) !== range(0, count($cart) - 1)) {
+            return response()->json([
+                'status' => false,
+                'message' => [
+                    'cart' => 'Not a sequential array'
+                ]
+            ], 400);
+        }
+        $keys = ["ProductId", "Count"];
+        foreach ($cart as $i) {
+            if (array_keys($i) !== $keys) {
+                return response()->json([
+                    'status' => false,
+                    'message' => [
+                        'cart' => 'key error'
+                    ]
+                ], 400);
+            } else if (!(is_int($i['ProductId']) && is_int($i['Count']))) {
+                return response()->json([
+                    'status' => false,
+                    'message' => [
+                        'cart' => 'ProductId and Count must be Numeric'
+                    ]
+                ], 400);
+            }
+        }
+        $query = Cart::query()->where('UserID', auth('api')->user()->getAuthIdentifier())
+            ->select(['id', 'UserID', 'ProductID', 'Count']);
+        $query->delete();
+        foreach ($cart as $i) {
+            Cart::query()->create([
+                'UserId' => auth('api')->user()->getAuthIdentifier(),
+                'ProductId' => $i['ProductId'],
+                'Count' => $i['Count'],
+            ]);
+        }
+        return response()->json([
+            'status' => true,
+            'message' => []
+        ], 200);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
-
-    public function test()
-    {
-        $userId = Auth::user()->getAuthIdentifier();
-        return response(Cart::query()->select(['ProductId', 'Count'])->where('UserId', $userId)->get(), 200);
-    }
 }

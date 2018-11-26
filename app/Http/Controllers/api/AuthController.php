@@ -87,7 +87,10 @@ class AuthController extends Controller
     public function logout()
     {
         auth('api')->logout();
-        return response()->json(['message' => 'Successfully logged out']);
+        return response()->json([
+            'status' => true,
+            'message' => 'Successfully logged out'
+        ]);
     }
 
     /**
@@ -148,7 +151,7 @@ class AuthController extends Controller
             'token' => $token,
             'email' => $request['email']
         ]);
-        $url .= "/reset/$token";
+        $url .= "/auth/resetPwd/$token";
         //sent mail
         return response()->json([
             'status' => true,

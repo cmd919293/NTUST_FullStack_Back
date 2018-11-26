@@ -30,6 +30,11 @@ class OrderController extends Controller
                 'Price' => $item['Price']
             ];
         }
+        return response()->json([
+            'status' => true,
+            'message' => [],
+            'order' => $data
+        ], 200);
         return $data;
     }
 

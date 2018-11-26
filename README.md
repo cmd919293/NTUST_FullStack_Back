@@ -313,6 +313,35 @@ API Document
                'updated_at': Date
     }
     ```
+	* ==需登入== api/config
+		* **Description**
+			更新用戶資料
+		* **Method**: ++POST++
+		* **Parameter**:
+            * name: string
+			    :::info
+                長度最大為255
+                :::
+            * password: string
+			    :::info
+                長度最小為6
+                :::
+            * confirm_password: string
+			    :::info
+                長度最小為6
+                必須和password一樣
+                :::
+    ```json*=
+    //message struct
+    {
+        'key': string
+    }
+    //return
+    {
+        'status' => bool,
+        'message' => message
+    }
+    ```
 * Cart
 	* api/GetCart
 		* **Description**

@@ -22,6 +22,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('user', 'api\AuthController@me');
     Route::get('refresh', 'api\AuthController@refresh');
     Route::get('logout', 'api\AuthController@logout');
+    Route::post('config', 'api\AuthController@edit');
 });
 
 Route::get('GetMonsters//{StartIndex}/{EndIndex}', function ($startId, $endId) {

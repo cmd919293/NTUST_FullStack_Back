@@ -31,7 +31,7 @@ class AuthController extends Controller
                 'message' => $validator->getMessageBag()
             ], 400);
         }
-        User::create([
+        User::query()->create([
             'name' => $request->input('name'),
             'email' => $request->input('email'),
             'password' => Hash::make($request->input('password')),
@@ -161,6 +161,10 @@ class AuthController extends Controller
         ], 200);
     }
 
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function resetPwd(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -199,5 +203,41 @@ class AuthController extends Controller
                 'password' => 'Reset Success'
             ]
         ]);
+    }
+
+    public function edit(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'password' => 'required|string|min:6',
+            'confirm_password' => 'required|same:password',
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => $validator->getMessageBag()
+            ], 400);
+        }
+        $user = auth('api')->user();
+        if (!$user) {
+            return response()->json([
+                'status' => false,
+                'message' => [
+                    'Auth' => 'Not Login'
+                ]
+            ], 403);
+        }
+        User::query()
+            ->where('id', $user->getAuthIdentifier())
+            ->update([
+                'name' => $request['name'],
+                'password' => Hash::make($request['password'])
+            ]);
+        return response()->json([
+            'status' => true,
+            'message' => [
+                'Config' => 'Success'
+            ]
+        ], 200);
     }
 }

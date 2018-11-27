@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+//Auth Route
 Route::post('register', 'api\AuthController@register');
 Route::post('login', 'api\AuthController@login');
 Route::post('forgetPwd', 'api\AuthController@forgetPwd');
@@ -25,6 +26,8 @@ Route::middleware('auth:api')->group(function () {
     Route::post('config', 'api\AuthController@edit');
 });
 
+//Monster Route
+Route::get('GetMonstersAmount/{fsStr}', 'api\MonsterController@amount');
 Route::get('GetMonsters//{StartIndex}/{EndIndex}', function ($startId, $endId) {
     return redirect()->route("GetMonsters", [
         'fsString' => '*',
@@ -52,6 +55,7 @@ Route::prefix('GetMonsters')->group(function () {
         ->name('GetMonsters');
 });
 
+//Image Route
 Route::prefix('Image')->group(function () {
     Route::get('{size}/{monId}/', function ($size, $monId) {
         return redirect()->route("GetMonsters", [
@@ -70,12 +74,16 @@ Route::prefix('Image')->group(function () {
         ]);
     });
     Route::get('{width}/{height}/{monId}/{imgId}', 'api\ImageController@show')
-    ->name('GetImage');
+        ->name('GetImage');
 });
 
+//Cart Route
 Route::middleware('auth:api')->group(function () {
     Route::get('GetCart', 'api\CartController@index');
     Route::get('GetOrders', 'api\OrderController@index');
     Route::post('UpdateCart', 'api\CartController@update');
     Route::post('MakeOrder', 'api\CartController@store');
 });
+
+//Test
+Route::post('test', 'api\MonsterController@store');

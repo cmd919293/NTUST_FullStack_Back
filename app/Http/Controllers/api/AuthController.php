@@ -19,12 +19,7 @@ class AuthController extends Controller
      */
     public function register(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6',
-            'confirm_password' => 'required|same:password',
-        ]);
+        $validator = Validator::make($request->all(), User::REGISTER);
         if ($validator->fails()) {
             return response()->json([
                 'status' => false,
@@ -48,10 +43,7 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|string|exists:users',
-            'password' => 'required|string|min:6'
-        ]);
+        $validator = Validator::make($request->all(), User::LOGIN);
         if ($validator->fails()) {
             return response()->json([
                 'status' => false,
@@ -123,10 +115,7 @@ class AuthController extends Controller
      */
     public function forgetPwd(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255|exists:users',
-            'email' => 'required|string|email|max:255|exists:users'
-        ]);
+        $validator = Validator::make($request->all(), User::FORGET);
         if ($validator->fails()) {
             return response()->json([
                 'status' => false,
@@ -167,12 +156,7 @@ class AuthController extends Controller
      */
     public function resetPwd(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|string|exists:password_resets',
-            'token' => 'required|string|exists:password_resets',
-            'password' => 'required|string|min:6',
-            'confirm_password' => 'required|same:password',
-        ]);
+        $validator = Validator::make($request->all(), User::RESET);
         if ($validator->fails()) {
             return response()->json([
                 'status' => false,
@@ -182,7 +166,7 @@ class AuthController extends Controller
         $record = PasswordResets::query()->where([
             'email' => $request['email'],
             'token' => $request['token']
-        ])->where(DB::raw('TIMESTAMPDIFF(SECOND,`created_at`,now())'), '<', 600);
+        ])->where(DB::raw('TimeStampDiff(SECOND,`created_at`,now())'), '<', 600);
         if ($record->get()->isEmpty()) {
             return response()->json([
                 'status' => false,

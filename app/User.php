@@ -10,7 +10,26 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 class User extends Authenticatable implements JWTSubject
 {
     use Notifiable;
-
+    public const FORGET = [
+        'name' => 'required|string|max:255|exists:users',
+        'email' => 'required|string|email|max:255|exists:users'
+    ];
+    public const RESET = [
+        'email' => 'required|string|exists:password_resets',
+        'token' => 'required|string|exists:password_resets',
+        'password' => 'required|string|min:6',
+        'confirm_password' => 'required|same:password',
+    ];
+    public  const LOGIN = [
+        'email' => 'required|string|exists:users',
+        'password' => 'required|string|min:6'
+    ];
+    public  const REGISTER = [
+        'name' => 'required|string|max:255',
+        'email' => 'required|string|email|max:255|unique:users',
+        'password' => 'required|string|min:6',
+        'confirm_password' => 'required|same:password',
+    ];
     /**
      * The attributes that are mass assignable.
      *

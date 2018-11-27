@@ -82,6 +82,13 @@ API Document
         ]
     }
     ```
+    * api/GetMonstersAmount/{fsString}
+    	* **Description**
+    		取得Monster數量。
+        * **Method**: ++GET++
+        * **Parameter**:
+            * fsString: string
+                同 GetMonsters 的 fsString
 * Image
     * api/Image/{size}/{monId}
     	* **Description**

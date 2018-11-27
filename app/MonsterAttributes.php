@@ -6,5 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class MonsterAttributes extends Model
 {
-    protected $table = "monsterattributes";
+    protected $table = "MonsterAttributes";
+    protected $fillable = [
+        'MonsterId',
+        'AttributeId',
+    ];
 }

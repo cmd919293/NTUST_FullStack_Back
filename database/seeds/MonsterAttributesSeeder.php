@@ -16,7 +16,7 @@ class MonsterAttributesSeeder extends Seeder
         MonsterAttributes::truncate();
         $file = base_path('database\seeds\MonsterDB\MonsterAttributes.csv');
 		$file = str_replace('\\','/',$file);
-        $query = "LOAD DATA INFILE '$file' INTO TABLE `MonsterAttributes` CHARACTER SET UTF8 FIELDS TERMINATED BY ',' ENCLOSED BY '\\\"' LINES TERMINATED BY '\\r\\n'";
+        $query = "LOAD DATA INFILE '$file' INTO TABLE `MonsterAttributes` CHARACTER SET UTF8 FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\n'";
         DB::connection()->getpdo()->exec($query);
     }
 }

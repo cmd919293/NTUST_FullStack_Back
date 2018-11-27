@@ -19,19 +19,14 @@ class AuthController extends Controller
      */
     public function register(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6',
-            'confirm_password' => 'required|same:password',
-        ]);
+        $validator = Validator::make($request->all(), User::REGISTER);
         if ($validator->fails()) {
             return response()->json([
                 'status' => false,
                 'message' => $validator->getMessageBag()
             ], 400);
         }
-        User::create([
+        User::query()->create([
             'name' => $request->input('name'),
             'email' => $request->input('email'),
             'password' => Hash::make($request->input('password')),
@@ -48,10 +43,7 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|string|exists:users',
-            'password' => 'required|string|min:6'
-        ]);
+        $validator = Validator::make($request->all(), User::LOGIN);
         if ($validator->fails()) {
             return response()->json([
                 'status' => false,
@@ -87,7 +79,10 @@ class AuthController extends Controller
     public function logout()
     {
         auth('api')->logout();
-        return response()->json(['message' => 'Successfully logged out']);
+        return response()->json([
+            'status' => true,
+            'message' => 'Successfully logged out'
+        ]);
     }
 
     /**
@@ -120,10 +115,7 @@ class AuthController extends Controller
      */
     public function forgetPwd(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255|exists:users',
-            'email' => 'required|string|email|max:255|exists:users'
-        ]);
+        $validator = Validator::make($request->all(), User::FORGET);
         if ($validator->fails()) {
             return response()->json([
                 'status' => false,
@@ -148,7 +140,7 @@ class AuthController extends Controller
             'token' => $token,
             'email' => $request['email']
         ]);
-        $url .= "/reset/$token";
+        $url .= "/auth/resetPwd/$token";
         //sent mail
         return response()->json([
             'status' => true,
@@ -158,14 +150,13 @@ class AuthController extends Controller
         ], 200);
     }
 
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function resetPwd(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|string|exists:password_resets',
-            'token' => 'required|string|exists:password_resets',
-            'password' => 'required|string|min:6',
-            'confirm_password' => 'required|same:password',
-        ]);
+        $validator = Validator::make($request->all(), User::RESET);
         if ($validator->fails()) {
             return response()->json([
                 'status' => false,
@@ -175,7 +166,7 @@ class AuthController extends Controller
         $record = PasswordResets::query()->where([
             'email' => $request['email'],
             'token' => $request['token']
-        ])->where(DB::raw('TIMESTAMPDIFF(SECOND,`created_at`,now())'), '<', 600);
+        ])->where(DB::raw('TimeStampDiff(SECOND,`created_at`,now())'), '<', 600);
         if ($record->get()->isEmpty()) {
             return response()->json([
                 'status' => false,
@@ -196,5 +187,41 @@ class AuthController extends Controller
                 'password' => 'Reset Success'
             ]
         ]);
+    }
+
+    public function edit(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'password' => 'required|string|min:6',
+            'confirm_password' => 'required|same:password',
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => $validator->getMessageBag()
+            ], 400);
+        }
+        $user = auth('api')->user();
+        if (!$user) {
+            return response()->json([
+                'status' => false,
+                'message' => [
+                    'Auth' => 'Not Login'
+                ]
+            ], 403);
+        }
+        User::query()
+            ->where('id', $user->getAuthIdentifier())
+            ->update([
+                'name' => $request['name'],
+                'password' => Hash::make($request['password'])
+            ]);
+        return response()->json([
+            'status' => true,
+            'message' => [
+                'Config' => 'Success'
+            ]
+        ], 200);
     }
 }

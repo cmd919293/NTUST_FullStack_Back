@@ -27,10 +27,10 @@ class CartController extends Controller
                 ->where('UserId', $userId)
                 ->get();
             return response([
-                    'status' => true,
-                    'message' => [],
-                    'cart' => $result]
-                , 200);
+                'status' => true,
+                'message' => [],
+                'cart' => $result
+            ], 200);
         } else {
             return response([
                 'status' => false,

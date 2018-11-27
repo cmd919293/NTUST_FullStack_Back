@@ -3,26 +3,14 @@
 namespace App\Http\Controllers\api;
 
 use Illuminate\Support\Facades\DB;
-use App\AttributeName;
-use App\Http\Resources\MonsterResource;
 use App\MonsterAttributes;
-use App\MonsterName;
 use App\Monsters;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Validator;
 
 class MonsterController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        return response(null, 404);
-    }
-
     /**
      * Store a newly created resource in storage.
      *
@@ -31,7 +19,15 @@ class MonsterController extends Controller
      */
     public function store(Request $request)
     {
-        return response(null, 404);
+        $validator = Validator::make($request->all(), [
+            'Address' => 'required|string'
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => $validator->getMessageBag()
+            ], 400);
+        }
     }
 
     /**
@@ -45,6 +41,7 @@ class MonsterController extends Controller
         $filterList = [];
         $filterPriceRange = [];
         $filterPrice = false;
+        $discounted = DB::raw('Monsters.price * Monsters.discount / 100');
         foreach ($arr as $v) {
             if (intval($v) == 0) {
                 $orderList[] = trim($v);
@@ -62,7 +59,7 @@ class MonsterController extends Controller
             if ($v == 'newest') {
                 $monQuery = $monQuery->orderBy('Monsters.created_at', 'DESC');
             } else if ($v == 'cheapest') {
-                $monQuery = $monQuery->orderBy(DB::raw('Monsters.price * Monsters.discount / 100'), 'ASC');
+                $monQuery = $monQuery->orderBy($discounted, 'ASC');
             } else if ($v == 'hottest') {
                 $monQuery = $monQuery->orderBy('Monsters.sold', 'DESC');
             } else if (strpos($v, 'price') === 0) {
@@ -74,9 +71,14 @@ class MonsterController extends Controller
             }
         }
         if ($filterPrice) {
-            $monQuery = $monQuery->whereBetween('price', $filterPriceRange);
+            $monQuery = $monQuery->whereBetween($discounted, $filterPriceRange);
         }
         return $monQuery;
+    }
+
+    public function amount($fsStr = '*')
+    {
+        return $this->initQuery($fsStr)->count();
     }
 
     /**
@@ -101,7 +103,7 @@ class MonsterController extends Controller
             ->select('MonsterName.*', 'Monsters.*')
             ->get();
         foreach ($mon as $i) {
-            $attr = MonsterAttributes::where('MonsterId', $i['id'])
+            $attr = MonsterAttributes::query()->where('MonsterId', $i['id'])
                 ->join('AttributeName', 'AttributeName.id', '=', 'MonsterAttributes.AttributeID')
                 ->get();
             $result = [

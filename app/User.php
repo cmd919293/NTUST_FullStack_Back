@@ -11,8 +11,8 @@ class User extends Authenticatable implements JWTSubject
 {
     use Notifiable;
     public const FORGET = [
-        'name' => 'required|string|max:255|exists:users',
-        'email' => 'required|string|email|max:255|exists:users'
+        'name' => 'required|string|max:255',
+        'email' => 'required|string|email|max:255'
     ];
     public const RESET = [
         'email' => 'required|string|exists:password_resets',
@@ -29,6 +29,18 @@ class User extends Authenticatable implements JWTSubject
         'email' => 'required|string|email|max:255|unique:users',
         'password' => 'required|string|min:6',
         'confirm_password' => 'required|same:password',
+    ];
+    public const EDIT_CONFIG = [
+        'name' => 'required|string|max:255',
+        'email' => 'required|string|email',
+        'password' => 'string',
+        'new_password' => 'string',
+        'confirm_password' => 'string|same:new_password',
+    ];
+    public const CHECK_PWD = [
+        'password' => 'string|min:6',
+        'new_password' => 'string|min:6',
+        'confirm_password' => 'string|same:new_password',
     ];
     /**
      * The attributes that are mass assignable.

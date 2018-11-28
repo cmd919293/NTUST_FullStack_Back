@@ -19,6 +19,14 @@ class AuthController extends Controller
      */
     public function register(Request $request)
     {
+        if (auth('api')->check()) {
+            return response()->json([
+                'status' => false,
+                'message' => [
+                    'User' => 'You are logged in!'
+                ]
+            ]);
+        }
         $validator = Validator::make($request->all(), User::REGISTER);
         if ($validator->fails()) {
             return response()->json([
@@ -43,6 +51,14 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
+        if (auth('api')->check()) {
+            return response()->json([
+                'status' => false,
+                'message' => [
+                    'User' => 'You are logged in!'
+                ]
+            ]);
+        }
         $validator = Validator::make($request->all(), User::LOGIN);
         if ($validator->fails()) {
             return response()->json([
@@ -191,11 +207,8 @@ class AuthController extends Controller
 
     public function edit(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'password' => 'required|string|min:6',
-            'confirm_password' => 'required|same:password',
-        ]);
+        $validator = Validator::make($request->all(), User::EDIT_CONFIG);
+        //輸入有誤
         if ($validator->fails()) {
             return response()->json([
                 'status' => false,
@@ -203,6 +216,7 @@ class AuthController extends Controller
             ], 400);
         }
         $user = auth('api')->user();
+        //使用者未登入
         if (!$user) {
             return response()->json([
                 'status' => false,
@@ -211,12 +225,40 @@ class AuthController extends Controller
                 ]
             ], 403);
         }
+        //要重設密碼
+        $updateArray = ['name' => $request['name']];
+        if ($request->has('password')) {
+            $v = Validator::make($request->all(), User::CHECK_PWD);
+            if ($v->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => $validator->getMessageBag()
+                ], 400);
+            } else if (!auth('api')->validate(['email' => $user['email'], 'password' => $request['password']])) {
+                return response()->json([
+                    'status' => false,
+                    'message' => [
+                        'password' => 'Password Error'
+                    ]
+                ]);
+            } else {
+                $updateArray['password'] = Hash::make($request['new_password']);
+            }
+        }
+        if ($user['email'] != $request['email']) {
+            if (User::query()->where('email', $request['email'])->count() > 0) {
+                return response()->json([
+                    'status' => false,
+                    'message' => [
+                        'email' => 'Email Exists'
+                    ]
+                ]);
+            }
+            $updateArray['email'] = $request['email'];
+        }
         User::query()
             ->where('id', $user->getAuthIdentifier())
-            ->update([
-                'name' => $request['name'],
-                'password' => Hash::make($request['password'])
-            ]);
+            ->update($updateArray);
         return response()->json([
             'status' => true,
             'message' => [

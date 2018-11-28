@@ -59,8 +59,6 @@ class MonsterController extends Controller
             ], 400);
         }
 
-        $monName = $request['NAME_EN'];
-
         //Insert New Monster
         MonsterName::query()->create([
             'NAME' => $request['NAME'],
@@ -93,7 +91,7 @@ class MonsterController extends Controller
 
         //Store Image
         foreach ($images as $k => $image) {
-            $image->storeAs("img/$monName", "$k.png");
+            $image->storeAs("img/$monId", "$k.png");
         }
         return response()->json([
             'status' => true,

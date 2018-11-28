@@ -54,11 +54,14 @@ Route::prefix('GetMonsters')->group(function () {
         ->where(['StartIndex' => '[0-9]+', 'EndIndex' => '[0-9]+'])
         ->name('GetMonsters');
 });
+Route::middleware('auth:api')->group(function () {
+    Route::post('CreateMonster', 'api\MonsterController@store');
+});
 
 //Image Route
 Route::prefix('Image')->group(function () {
     Route::get('{size}/{monId}/', function ($size, $monId) {
-        return redirect()->route("GetMonsters", [
+        return redirect()->route("GetImage", [
             'width' => $size,
             'height' => $size,
             'monId' => $monId,
@@ -66,7 +69,7 @@ Route::prefix('Image')->group(function () {
         ]);
     });
     Route::get('{size}/{monId}/{imgId}', function ($size, $monId, $imgId) {
-        return redirect()->route("GetMonsters", [
+        return redirect()->route("GetImage", [
             'width' => $size,
             'height' => $size,
             'monId' => $monId,
@@ -86,4 +89,3 @@ Route::middleware('auth:api')->group(function () {
 });
 
 //Test
-Route::post('test', 'api\MonsterController@store');

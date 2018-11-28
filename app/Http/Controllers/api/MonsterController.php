@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers\api;
 
+use App\AttributeName;
+use App\MonsterName;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use App\MonsterAttributes;
 use App\Monsters;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class MonsterController extends Controller
@@ -19,15 +23,84 @@ class MonsterController extends Controller
      */
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'Address' => 'required|string'
-        ]);
+        if (auth('api')->user()['permission'] !== 0) {
+            return response()->json([
+                'status' => false,
+                'message' => [
+                    'permission' => 'permission error'
+                ]
+            ], 403);
+        }
+        $validator = Validator::make($request->all(), Monsters::INS_RULE);
         if ($validator->fails()) {
             return response()->json([
                 'status' => false,
                 'message' => $validator->getMessageBag()
             ], 400);
         }
+        $images = $request->file('image');
+        /** @var UploadedFile $image */
+        foreach ($images as $image) {
+            $imgValidate = Validator::make(['image' => $image], ['image' => 'required|image']);
+            if ($imgValidate->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => $imgValidate->getMessageBag()
+                ], 400);
+            }
+        }
+
+        if (array_keys($request['attributes']) !== range(0, count($request['attributes']) - 1)) {
+            return response()->json([
+                'status' => false,
+                'message' => [
+                    'attributes' => 'attributes error'
+                ]
+            ], 400);
+        }
+
+        $monName = $request['NAME_EN'];
+
+        //Insert New Monster
+        MonsterName::query()->create([
+            'NAME' => $request['NAME'],
+            'NAME_EN' => $request['NAME_EN'],
+            'NAME_JP' => $request['NAME_JP']
+        ]);
+        $newRow = Monsters::query()->create([
+            'imgNum' => count($images),
+            'HP' => $request['HP'],
+            'ATTACK' => $request['ATTACK'],
+            'DEFENSE' => $request['DEFENSE'],
+            'SP_ATTACK' => $request['SP_ATTACK'],
+            'SP_DEFENSE' => $request['SP_DEFENSE'],
+            'SPEED' => $request['SPEED'],
+            'sold' => $request['sold'],
+            'price' => $request['price'],
+            'description' => $request['description'],
+        ]);
+        $monId = $newRow['id'];
+        $arr = AttributeName::query()->whereIn('id', $request['attributes'])
+            ->select('id')->get()->toArray();
+
+        //Insert MonsterAttribute
+        foreach ($arr as $v) {
+            MonsterAttributes::query()->create([
+                'MonsterId' => $monId,
+                'AttributeId' => $v['id']
+            ]);
+        }
+
+        //Store Image
+        foreach ($images as $k => $image) {
+            $image->storeAs("img/$monName", "$k.png");
+        }
+        return response()->json([
+            'status' => true,
+            'message' => [
+                'Data' => 'Insert Success'
+            ]
+        ]);
     }
 
     /**
@@ -62,10 +135,10 @@ class MonsterController extends Controller
                 $monQuery = $monQuery->orderBy($discounted, 'ASC');
             } else if ($v == 'hottest') {
                 $monQuery = $monQuery->orderBy('Monsters.sold', 'DESC');
-            } else if (strpos($v, 'price') === 0) {
+            } else if (starts_with($v, 'price')) {
                 $filterPriceRange = explode('-', substr($v, 6));
                 $filterPrice = sort($filterPriceRange, SORT_NUMERIC) && (count($filterPriceRange) == 2);
-            } else if (strpos($v, 'id') === 0) {
+            } else if (starts_with($v, 'id')) {
                 $id = intval(substr($v, 3));
                 $monQuery = $monQuery->where(DB::raw('`monsters`.`id`'), $id);
             }
@@ -82,12 +155,10 @@ class MonsterController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  string $fsStr
-     * @param  int $startId
-     * @param  int $endId
-     * @return array $data
+     * @param string $fsStr
+     * @param int $startId
+     * @param int $endId
+     * @return array|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
      */
     public function show($fsStr = '*', $startId = 0, $endId = 0)
     {
@@ -99,7 +170,7 @@ class MonsterController extends Controller
         $data = [];
         $mon = $this->initQuery($fsStr)->skip($startId)
             ->take($endId - $startId + 1)
-            ->join('MonsterName', 'monsters.id', '=', 'monstername.id')
+            ->join('MonsterName', 'MonsterName.id', '=', 'monsters.id')
             ->select('MonsterName.*', 'Monsters.*')
             ->get();
         foreach ($mon as $i) {
@@ -137,28 +208,5 @@ class MonsterController extends Controller
             array_push($data, $result);
         }
         return $data;
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @param  int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        return response(null, 404);
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        return response(null, 404);
     }
 }

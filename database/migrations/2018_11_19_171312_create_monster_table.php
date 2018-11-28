@@ -22,7 +22,7 @@ class CreateMonsterTable extends Migration
             $table->integer('SP_ATTACK');
             $table->integer('SP_DEFENSE');
             $table->integer('SPEED');
-            $table->integer('sold');
+            $table->integer('sold')->default(0);
             $table->integer('discount')->default(100);
             $table->integer('price');
             $table->text('description');

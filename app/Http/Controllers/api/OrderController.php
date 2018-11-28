@@ -9,9 +9,7 @@ use App\Http\Controllers\Controller;
 class OrderController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * @return array|\Illuminate\Http\JsonResponse
      */
     public function index()
     {
@@ -35,7 +33,6 @@ class OrderController extends Controller
             'message' => [],
             'order' => $data
         ], 200);
-        return $data;
     }
 
     /**
@@ -46,8 +43,8 @@ class OrderController extends Controller
      */
     public function send($id)
     {
-        if (auth('api')->user()->getAuthIdentifier() === 0) {
-            Order::query()->where('id', $id)->update(['Shipment'], true);
+        if (auth('api')->user()['permission'] === 0) {
+            Order::query()->where('id', $id)->update(['Shipment' => true]);
             return response()->json(
                 [
                     'status' => true,

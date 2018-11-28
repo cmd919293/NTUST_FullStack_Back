@@ -20,20 +20,21 @@ class Monsters extends Model
         'SP_DEFENSE',
         'description',
         'price',
-        'attributes',
+        'imgNum',
     ];
     public const INS_RULE = [
-        'ATTACK' => 'numeric|min:0',
-        'DEFENSE' => 'numeric|min:0',
-        'HP' => 'numeric|min:0',
-        'NAME' => 'string|min:1',
-        'NAME_EN' => 'string|min:1|unique:MonsterName',
-        'NAME_JP' => 'string|min:1',
-        'SPEED' => 'numeric|min:0',
-        'SP_ATTACK' => 'numeric|min:0',
-        'SP_DEFENSE' => 'numeric|min:0',
-        'description' => 'string',
-        'price' => 'numeric|min:1',
-        'attributes' => 'array'
+        'ATTACK' => 'required|numeric|min:0',
+        'DEFENSE' => 'required|numeric|min:0',
+        'HP' => 'required|numeric|min:0',
+        'NAME' => 'required|string|min:1|unique:MonsterName',
+        'NAME_EN' => 'required|string|min:1|unique:MonsterName',
+        'NAME_JP' => 'required|string|min:1|unique:MonsterName',
+        'SPEED' => 'required|numeric|min:0',
+        'SP_ATTACK' => 'required|numeric|min:0',
+        'SP_DEFENSE' => 'required|numeric|min:0',
+        'description' => 'required|string',
+        'price' => 'required|numeric|min:1',
+        'attributes' => 'required|array',
+        'image' => 'required|array'
     ];
 }

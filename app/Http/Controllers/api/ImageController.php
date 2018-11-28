@@ -7,6 +7,7 @@ use App\MonsterName;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 
 class ImageController extends Controller
 {
@@ -43,24 +44,23 @@ class ImageController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  int $width
-     * @param  int $height
-     * @param  int $monId
-     * @param  int $imgId
-     * @return \Illuminate\Http\Response
+     * @param $width
+     * @param $height
+     * @param $monId
+     * @param $imgId
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     public function show($width, $height, $monId, $imgId)
     {
         $monName = MonsterName::query()->where("id", $monId)->get(["NAME_EN"]);
         if (count($monName) != 1) return response("Image Not Found", 404);
         $monName = $monName[0]['NAME_EN'];
-        $url = storage_path("img/$monName/$imgId.png");
-        if (!File::exists($url)) return response("Image Not Found", 404);
+        $url = "img/$monName/$imgId.png";
+        if (!Storage::disk()->exists($url)) return response("Image Not Found", 404);
         header("Content-Type: image/png");
-        $imageInfo = getimagesize($url);
-        $importFile = File::get($url);
+        $imageInfo = getimagesize(storage_path("app/$url"));
+        $importFile = Storage::disk()->get($url);
         $file = imagecreatefromstring($importFile);
         $image = imagecreatetruecolor($width, $height);
         imagealphablending($image, false);

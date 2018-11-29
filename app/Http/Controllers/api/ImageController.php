@@ -53,10 +53,7 @@ class ImageController extends Controller
      */
     public function show($width, $height, $monId, $imgId)
     {
-        $monName = MonsterName::query()->where("id", $monId)->get(["NAME_EN"]);
-        if (count($monName) != 1) return response("Image Not Found", 404);
-        $monName = $monName[0]['NAME_EN'];
-        $url = "img/$monName/$imgId.png";
+        $url = "img/$monId/$imgId.png";
         if (!Storage::disk()->exists($url)) return response("Image Not Found", 404);
         header("Content-Type: image/png");
         $imageInfo = getimagesize(storage_path("app/$url"));

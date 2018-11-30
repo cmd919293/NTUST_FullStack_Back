@@ -43,19 +43,10 @@ class OrderController extends Controller
      */
     public function send($id)
     {
-        if (auth('api')->user()['permission'] === 0) {
-            Order::query()->where('id', $id)->update(['Shipment' => true]);
-            return response()->json(
-                [
-                    'status' => true,
-                    'message' => []
-                ], 200);
-        }
+        Order::query()->where('id', $id)->update(['Shipment' => true]);
         return response()->json([
-            'status' => false,
-            'message' => [
-                'permission' => 'permission error'
-            ]
-        ], 403);
+            'status' => true,
+            'message' => []
+        ], 200);
     }
 }

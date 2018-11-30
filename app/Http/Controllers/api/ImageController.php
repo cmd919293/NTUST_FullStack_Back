@@ -53,7 +53,7 @@ class ImageController extends Controller
      */
     public function show($width, $height, $monId, $imgId)
     {
-        $url = "img/$monId/$imgId.png";
+        $url = "img/$monId/$imgId.jpg";
         if (!Storage::disk()->exists($url)) return response("Image Not Found", 404);
         header("Content-Type: image/png");
         $imageInfo = getimagesize(storage_path("app/$url"));

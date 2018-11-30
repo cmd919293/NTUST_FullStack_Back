@@ -112,7 +112,7 @@
                 </td>
                 <td>
                     <input id="Image" name="image[]" type="file" multiple="true"/>
-                    <div id="preimg"></div>
+                    <div id="preImg"></div>
                 </td>
             </tr>
             <tr>

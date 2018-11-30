@@ -22,9 +22,9 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
-Route::get('/create', function(){
+Route::get('/create', function () {
     $data = app(AttributeNameController::class)->index();
-    $data =  json_decode(json_encode($data),true);
+    $data = json_decode(json_encode($data), true);
     return view('create', ['attrs' => $data['original']]);
 })->name('create');
 

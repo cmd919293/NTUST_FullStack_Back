@@ -76,7 +76,7 @@ Route::prefix('Image')->middleware('throttle:1000')->group(function () {
             'monId' => $monId,
             'imgId' => 0,
         ]);
-    });
+    })->where(['size' => '[0-9]+']);
     Route::get('{size}/{monId}/{imgId}', function ($size, $monId, $imgId) {
         return redirect()->route("GetImage", [
             'width' => $size,
@@ -86,6 +86,7 @@ Route::prefix('Image')->middleware('throttle:1000')->group(function () {
         ]);
     });
     Route::get('{width}/{height}/{monId}/{imgId}', 'api\ImageController@show')->name('GetImage');
+    Route::get('Base64/{monId}', 'api\ImageController@ToBase64');
 });
 //Test
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\api;
 
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Support\Facades\DB;
 use App\MonsterName;
 use Illuminate\Http\Request;
@@ -54,7 +55,9 @@ class ImageController extends Controller
     public function show($width, $height, $monId, $imgId)
     {
         $url = "img/$monId/$imgId.jpg";
-        if (!Storage::disk()->exists($url)) return response("Image Not Found", 404);
+        if (!Storage::disk()->exists($url)) {
+            return response("Image Not Found", 404);
+        }
         header("Content-Type: image/png");
         $imageInfo = getimagesize(storage_path("app/$url"));
         $importFile = Storage::disk()->get($url);
@@ -71,6 +74,20 @@ class ImageController extends Controller
         imagedestroy($file);
         imagepng($image);
         imagedestroy($image);
-        return response(null, 200);
+        return response(null, 200)->header('Content-Type', 'image/png');
+    }
+
+    /**
+     * @param $monId
+     * @return string
+     * @throws FileNotFoundException
+     */
+    public function ToBase64($monId)
+    {
+        ob_start();
+        $this->show(intval(300), intval(300), $monId, 0);
+        $img = ob_get_contents();
+        ob_end_clean();
+        return "data:image/png;base64," . base64_encode($img);
     }
 }

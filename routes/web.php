@@ -27,25 +27,3 @@ Route::get('/create', function () {
     $data = json_decode(json_encode($data), true);
     return view('create', ['attrs' => $data['original']]);
 })->name('create');
-
-//Image Route
-Route::prefix('Image')->group(function () {
-    Route::get('{size}/{monId}/', function ($size, $monId) {
-        return redirect()->route("GetImage", [
-            'width' => $size,
-            'height' => $size,
-            'monId' => $monId,
-            'imgId' => 0,
-        ]);
-    });
-    Route::get('{size}/{monId}/{imgId}', function ($size, $monId, $imgId) {
-        return redirect()->route("GetImage", [
-            'width' => $size,
-            'height' => $size,
-            'monId' => $monId,
-            'imgId' => $imgId,
-        ]);
-    });
-    Route::get('{width}/{height}/{monId}/{imgId}', 'api\ImageController@show')
-        ->name('GetImage');
-});

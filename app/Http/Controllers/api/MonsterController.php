@@ -192,7 +192,8 @@ class MonsterController extends Controller
                 'imgNum' => $i['imgNum'],
                 'price' => $i['price'],
                 'sold' => $i['sold'],
-                'attributes' => []
+                'attributes' => [],
+                'Icon' => app(ImageController::class)->ToBase64($i['id'])
             ];
             foreach ($attr as $j) {
                 $attrLang = [];

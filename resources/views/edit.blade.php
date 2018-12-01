@@ -98,7 +98,11 @@
                         @endforeach
                     </select>
                     <span id="addAttr"></span>
-                    <div id="attr"></div>
+                    <div id="attr">
+                        @foreach($monster['attributes'] as $attr)
+                            <label onclick="this.remove()" data-text="{{$attr['NAME']}}" class="attrField"><input type="hidden" value="{{$attr['value']}}" name="attributes[]"></label>
+                        @endforeach
+                    </div>
                 </td>
             </tr>
             <tr>
@@ -113,9 +117,9 @@
                 <td><label for="Original Image"></label></td>
                 <td>
                     <div id="oriImg">
-                    @for($i = 0; $i < $monster['imgNum']; $i++)
-                        <span>{{$i}}</span>
-                    @endfor
+                        @for($i = 0; $i < $monster['imgNum']; $i++)
+                            <img src="../api/Image/300/200/{{$monster['id']}}/{{$i}}"/>
+                        @endfor
                     </div>
                 </td>
             </tr>

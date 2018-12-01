@@ -4,24 +4,23 @@
             addAttr = document.getElementById('addAttr'),
             attrSelector = document.getElementById('Attributes');
         addAttr.addEventListener('click', function () {
-            let btn = document.createElement('input'),
+            let lab = document.createElement('label'),
                 hid = document.createElement('input');
-            btn.type = 'button';
             hid.type = 'hidden';
-            btn.value = attrSelector.selectedOptions[0].innerText;
+            lab.dataset['text'] = attrSelector.selectedOptions[0].innerText;
             hid.value = attrSelector.value;
             hid.name = 'attributes[]';
-            btn.className = 'attrField';
-            btn.append(hid);
-            btn.addEventListener('click', function () {
+            lab.className = 'attrField';
+            lab.append(hid);
+            lab.addEventListener('click', function () {
                 this.remove();
             });
-            for (let i of attr.childNodes) {
-                if (i.firstElementChild.value === hid.value) {
+            for (let i of attr.children) {
+                if (i.children[0].value === hid.value) {
                     return;
                 }
             }
-            attr.append(btn);
+            attr.append(lab);
         });
 
         let preImg = document.getElementById('preImg'),
@@ -50,6 +49,7 @@
                 this.files = tempFiles;
             }
         });
+
         function removePreImage() {
             preImg.querySelectorAll('img').forEach(a => {
                 if (a.src.startsWith('blob')) {
@@ -58,6 +58,14 @@
                 a.remove();
             });
             preImg.innerHTML = "";
+        }
+
+        let createBtn = document.getElementById('createMonster');
+        if (createBtn) {
+            createBtn.addEventListener('click', function () {
+                let f = new FormData(this.form);
+                console.dir(this);
+            });
         }
     });
 })();

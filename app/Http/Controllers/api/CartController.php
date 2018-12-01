@@ -28,7 +28,7 @@ class CartController extends Controller
             $carts = Cart::query()
                 ->join('MonsterName', 'ProductId', '=', 'MonsterName.id')
                 ->join('Monsters', 'ProductId', '=', 'Monsters.id')
-                ->select('ProductId', 'Count', DB::raw('(price * discount / 100) as Price'), 'MonsterName.*')
+                ->select('ProductId', 'Count', DB::raw('CEIL(price * discount / 100) as Price'), 'MonsterName.*')
                 ->where('UserId', $userId)
                 ->get();
             foreach ($carts as $i) {
@@ -52,6 +52,7 @@ class CartController extends Controller
                             $attrLang[$k] = $v;
                         }
                     }
+                    $attrLang['value'] = $j['id'];
                     array_push($data['attributes'], $attrLang);
                 }
                 array_push($result, $data);
@@ -105,7 +106,7 @@ class CartController extends Controller
             $price = 0;
             $product = Monsters::query()
                 ->where('id', $item['ProductID'])
-                ->select(DB::raw('(`price` * `discount` / 100) as discounted'))
+                ->select(DB::raw('CEIL(`price` * `discount` / 100) as discounted'))
                 ->get();
             if ($product->isNotEmpty()) {
                 $price = $product[0]['discounted'];
@@ -144,6 +145,15 @@ class CartController extends Controller
             ], 400);
         }
         $cart = $request['cart'];
+        if (count($cart) == 0) {
+            Cart::query()->where('UserID', auth('api')->user()->getAuthIdentifier())->delete();
+            return response()->json([
+                'status' => true,
+                'message' => [
+                    'cart' => 'Clear'
+                ]
+            ], 200);
+        }
         if (array_keys($cart) !== range(0, count($cart) - 1)) {
             return response()->json([
                 'status' => false,

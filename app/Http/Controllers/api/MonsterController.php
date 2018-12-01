@@ -99,6 +99,7 @@ class MonsterController extends Controller
                         $attrLang[$k] = $v;
                     }
                 }
+                $attrLang['value'] = $j['id'];
                 array_push($result['attributes'], $attrLang);
             }
             array_push($data, $result);

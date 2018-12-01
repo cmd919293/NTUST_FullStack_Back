@@ -9,7 +9,7 @@
                     <label for="ATTACK"></label>
                 </td>
                 <td>
-                    <input id="ATTACK" name="ATTACK" type="text" value="{{old('ATTACK',0}}"/>
+                    <input id="ATTACK" name="ATTACK" type="text" value="{{old('ATTACK',0)}}"/>
                 </td>
             </tr>
             <tr>
@@ -118,7 +118,7 @@
             <tr>
                 <td colspan="2">
                     <div>
-                        <input type="button" value="送出"/>
+                        <input id="createMonster" type="button" value="送出"/>
                         <input type="reset" value="重置"/>
                     </div>
                 </td>

@@ -59,6 +59,7 @@ Route::middleware('throttle:60,1')->group(function () {
     Route::middleware('admin')->group(function () {
         Route::post('CreateMonster', 'api\MonsterController@store');
     });
+    Route::get('Search/{name}', 'api\MonsterController@search');
 //Cart Route
     Route::middleware('auth:api')->group(function () {
         Route::get('GetCart', 'api\CartController@index');
@@ -89,4 +90,3 @@ Route::prefix('Image')->middleware('throttle:1000')->group(function () {
     Route::get('Base64/{monId}', 'api\ImageController@ToBase64');
 });
 //Test
-Route::get('Search/{name}', 'api\MonsterController@search');

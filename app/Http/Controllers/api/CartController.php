@@ -24,7 +24,7 @@ class CartController extends Controller
         if (Auth::user()) {
             $userId = Auth::user()->getAuthIdentifier();
             $result = Cart::query()->join('Monsters', 'ProductId', '=', DB::raw('Monsters.id'))
-                ->select('ProductId', 'Count', DB::raw('Convert(price * discount / 100, DOUBLE) as Price'))
+                ->select('ProductId', 'Count', DB::raw('(price * discount / 100) as Price'))
                 ->where('UserId', $userId)
                 ->get();
             return response([

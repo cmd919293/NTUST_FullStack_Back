@@ -114,14 +114,6 @@ class MonsterController extends Controller
      */
     public function store(Request $request)
     {
-        if (auth('api')->user()['permission'] !== 0) {
-            return response()->json([
-                'status' => false,
-                'message' => [
-                    'permission' => 'permission error'
-                ]
-            ], 403);
-        }
         $validator = Validator::make($request->all(), Monsters::INS_RULE);
         if ($validator->fails()) {
             return response()->json([
@@ -193,6 +185,23 @@ class MonsterController extends Controller
     }
 
     /**
+     * @param Request $request
+     * @param $monster
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function update(Request $request, $monster)
+    {
+        $validator = Validator::make($request->all(), Monsters::UPDATE_RULE);
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => $validator->getMessageBag()
+            ], 400);
+        }
+    }
+
+    /**
      * @param string $fsStr
      * @return int
      */
@@ -222,10 +231,6 @@ class MonsterController extends Controller
         return $this->makeResponse($mon);
     }
 
-    /**
-     * @param $name
-     * @return array
-     */
     public function search($name)
     {
         $raw = DB::raw("search_monster(\"$name\", `NAME`)");

@@ -2,7 +2,7 @@
     addEventListener('load', function () {
         let attr = document.getElementById('attr'),
             addAttr = document.getElementById('addAttr'),
-            attrSelector = document.getElementById('attrSelector');
+            attrSelector = document.getElementById('Attributes');
         addAttr.addEventListener('click', function () {
             let btn = document.createElement('input'),
                 hid = document.createElement('input');

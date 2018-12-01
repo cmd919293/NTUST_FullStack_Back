@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', '新增資料')
+@section('title', '修改資料')
 @section('content')
     <link href="{{asset('css/Monster.css')}}" rel="stylesheet" type="text/css">
     <form id="forms">
@@ -9,7 +9,7 @@
                     <label for="ATTACK"></label>
                 </td>
                 <td>
-                    <input id="ATTACK" name="ATTACK" type="text"/>
+                    <input id="ATTACK" name="ATTACK" type="text" value="{{old('ATTACK',$monster['ATTACK'])}}"/>
                 </td>
             </tr>
             <tr>
@@ -17,7 +17,7 @@
                     <label for="DEFENSE"></label>
                 </td>
                 <td>
-                    <input id="DEFENSE" name="DEFENSE" type="text"/>
+                    <input id="DEFENSE" name="DEFENSE" type="text" value="{{old('DEFENSE',$monster['DEFENSE'])}}"/>
                 </td>
             </tr>
             <tr>
@@ -25,7 +25,7 @@
                     <label for="HP"></label>
                 </td>
                 <td>
-                    <input id="HP" name="HP" type="text"/>
+                    <input id="HP" name="HP" type="text" value="{{old('HP',$monster['HP'])}}"/>
                 </td>
             </tr>
             <tr>
@@ -33,7 +33,7 @@
                     <label for="NAME"></label>
                 </td>
                 <td>
-                    <input id="NAME" name="NAME" type="text"/>
+                    <input id="NAME" name="NAME" type="text" value="{{old('NAME',$monster['NAME'])}}"/>
                 </td>
             </tr>
             <tr>
@@ -41,7 +41,7 @@
                     <label for="NAME_EN"></label>
                 </td>
                 <td>
-                    <input id="NAME_EN" name="NAME_EN" type="text"/>
+                    <input id="NAME_EN" name="NAME_EN" type="text" value="{{old('NAME_EN',$monster['NAME_EN'])}}"/>
                 </td>
             </tr>
             <tr>
@@ -49,7 +49,7 @@
                     <label for="NAME_JP"></label>
                 </td>
                 <td>
-                    <input id="NAME_JP" name="NAME_JP" type="text"/>
+                    <input id="NAME_JP" name="NAME_JP" type="text" value="{{old('NAME_JP',$monster['NAME_JP'])}}"/>
                 </td>
             </tr>
             <tr>
@@ -57,7 +57,7 @@
                     <label for="SPEED"></label>
                 </td>
                 <td>
-                    <input id="SPEED" name="SPEED" type="text"/>
+                    <input id="SPEED" name="SPEED" type="text" value="{{old('SPEED',$monster['SPEED'])}}"/>
                 </td>
             </tr>
             <tr>
@@ -65,7 +65,8 @@
                     <label for="SP_ATTACK"></label>
                 </td>
                 <td>
-                    <input id="SP_ATTACK" name="SP_ATTACK" type="text"/>
+                    <input id="SP_ATTACK" name="SP_ATTACK" type="text"
+                           value="{{old('SP_ATTACK',$monster['SP_ATTACK'])}}"/>
                 </td>
             </tr>
             <tr>
@@ -73,7 +74,8 @@
                     <label for="SP_DEFENSE"></label>
                 </td>
                 <td>
-                    <input id="SP_DEFENSE" name="SP_DEFENSE" type="text"/>
+                    <input id="SP_DEFENSE" name="SP_DEFENSE" type="text"
+                           value="{{old('SP_DEFENSE',$monster['SP_DEFENSE'])}}"/>
                 </td>
             </tr>
             <tr>
@@ -81,7 +83,8 @@
                     <label for="Description"></label>
                 </td>
                 <td>
-                    <textarea id="Description" name="description"></textarea>
+                    <textarea id="Description"
+                              name="description">{{old('description',$monster['description'])}}</textarea>
                 </td>
             </tr>
             <tr>
@@ -89,7 +92,7 @@
                     <label for="Attributes"></label>
                 </td>
                 <td>
-                    <select id="attrSelector">
+                    <select id="Attributes">
                         @foreach($attrs as $attr)
                             <option value="{{$attr['value']}}">{{$attr['NAME']}}</option>
                         @endforeach
@@ -103,7 +106,17 @@
                     <label for="Price"></label>
                 </td>
                 <td>
-                    <input id="Price" name="price" type="text"/>
+                    <input id="Price" name="price" type="text" value="{{old('price',$monster['price'])}}"/>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="Original Image"></label></td>
+                <td>
+                    <div id="oriImg">
+                    @for($i = 0; $i < $monster['imgNum']; $i++)
+                        <span>{{$i}}</span>
+                    @endfor
+                    </div>
                 </td>
             </tr>
             <tr>

@@ -31,8 +31,8 @@ Route::get('/create', function () {
 Route::get('/{id}/edit', function ($id) {
     $data = app(AttributeNameController::class)->index();
     $data = json_decode(json_encode($data), true);
-    dd($data);
     $mon = app(MonsterController::class)->show("id:$id");
     $mon = json_decode(json_encode($mon), true);
-    return view('edit', ['attrs' => $data['original'], 'monster' => $mon['original']]);
+
+    return view('edit', ['attrs' => $data['original'], 'monster' => $mon[0]]);
 })->name('edit');

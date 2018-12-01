@@ -89,4 +89,4 @@ Route::prefix('Image')->middleware('throttle:1000')->group(function () {
     Route::get('Base64/{monId}', 'api\ImageController@ToBase64');
 });
 //Test
-
+Route::get('Search/{name}', 'api\MonsterController@search');

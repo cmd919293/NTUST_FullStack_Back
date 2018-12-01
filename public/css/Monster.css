@@ -18,16 +18,29 @@
 }
 
 #forms label {
-    display: block;
     text-align: right;
     margin: 0;
 }
 
-#forms label::before {
+#forms label[data-text] {
+    text-align: center;
+    padding: 0 5px;
+    border-radius: 3px;
+}
+
+#forms label[data-text]::after {
+    content: attr(data-text);
+}
+
+#forms td:nth-child(1) label {
+    display: block;
+}
+
+#forms td:nth-child(1) label::before {
     content: attr(for);
 }
 
-#forms label::after {
+#forms td:nth-child(1) label::after {
     content: ": ";
 }
 
@@ -102,7 +115,7 @@
 
 #forms .attrField {
     border: 1px solid #a9a9a9;
-    margin: 0.25rem 0.5rem;
+    margin: 0.25rem 0 0.25rem 0.75rem;
 }
 
 #forms .attrField:focus {
@@ -113,14 +126,14 @@
     background: #fff;
 }
 
-#preImg:not(:empty) {
+#preImg:not(:empty), #oriImg {
     display: flex;
     justify-content: space-evenly;
     flex-wrap: wrap;
     padding-top: 0.75em;
 }
 
-#preImg > img {
+#preImg > img, #oriImg > img {
     width: 30%;
     height: 100%;
     margin: 0 0.5rem 0.75rem;

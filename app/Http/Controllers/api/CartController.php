@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\api;
 
 use App\Cart;
+use App\MonsterAttributes;
 use App\Monsters;
 use App\Order;
 use App\OrderItem;
@@ -23,10 +24,39 @@ class CartController extends Controller
     {
         if (Auth::user()) {
             $userId = Auth::user()->getAuthIdentifier();
-            $result = Cart::query()->join('Monsters', 'ProductId', '=', DB::raw('Monsters.id'))
-                ->select('ProductId', 'Count', DB::raw('Convert(price * discount / 100, DOUBLE) as Price'))
+            $result = [];
+            $carts = Cart::query()
+                ->join('MonsterName', 'ProductId', '=', 'MonsterName.id')
+                ->join('Monsters', 'ProductId', '=', 'Monsters.id')
+                ->select('ProductId', 'Count', DB::raw('CEIL(price * discount / 100) as Price'), 'MonsterName.*')
                 ->where('UserId', $userId)
                 ->get();
+            foreach ($carts as $i) {
+                $attr = MonsterAttributes::query()->where('MonsterId', $i['ProductId'])
+                    ->join('AttributeName', 'AttributeName.id', '=', 'MonsterAttributes.AttributeID')
+                    ->get();
+                $data = [
+                    'ProductId' => $i['ProductId'],
+                    'Count' => $i['Count'],
+                    'Price' => $i['Price'],
+                    'NAME' => $i['NAME'],
+                    'NAME_EN' => $i['NAME_EN'],
+                    'NAME_JP' => $i['NAME_JP'],
+                    'attributes' => [],
+                    'Icon' => app(ImageController::class)->ToBase64($i['id'])
+                ];
+                foreach ($attr as $j) {
+                    $attrLang = [];
+                    foreach ($j->getAttributes() as $k => $v) {
+                        if (strpos(strtolower($k), 'name') === 0) {
+                            $attrLang[$k] = $v;
+                        }
+                    }
+                    $attrLang['value'] = $j['id'];
+                    array_push($data['attributes'], $attrLang);
+                }
+                array_push($result, $data);
+            }
             return response([
                 'status' => true,
                 'message' => [],
@@ -76,7 +106,7 @@ class CartController extends Controller
             $price = 0;
             $product = Monsters::query()
                 ->where('id', $item['ProductID'])
-                ->select(DB::raw('(`price` * `discount` / 100) as discounted'))
+                ->select(DB::raw('CEIL(`price` * `discount` / 100) as discounted'))
                 ->get();
             if ($product->isNotEmpty()) {
                 $price = $product[0]['discounted'];
@@ -106,7 +136,7 @@ class CartController extends Controller
     public function update(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'cart' => 'required|array'
+            'cart' => 'array'
         ]);
         if ($validator->fails()) {
             return response()->json([
@@ -114,7 +144,24 @@ class CartController extends Controller
                 'message' => $validator->getMessageBag()
             ], 400);
         }
+        if (!$request->has('cart')) {
+            return response()->json([
+                'status' => false,
+                'message' => [
+                    'cart' => ['The cart field is required.']
+                ]
+            ], 400);
+        }
         $cart = $request['cart'];
+        if (count($cart) == 0) {
+            Cart::query()->where('UserID', auth('api')->user()->getAuthIdentifier())->delete();
+            return response()->json([
+                'status' => true,
+                'message' => [
+                    'cart' => 'Clear'
+                ]
+            ], 200);
+        }
         if (array_keys($cart) !== range(0, count($cart) - 1)) {
             return response()->json([
                 'status' => false,

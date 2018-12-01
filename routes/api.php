@@ -59,6 +59,7 @@ Route::middleware('throttle:60,1')->group(function () {
     Route::middleware('admin')->group(function () {
         Route::post('CreateMonster', 'api\MonsterController@store');
     });
+    Route::get('Search/{name}', 'api\MonsterController@search');
 //Cart Route
     Route::middleware('auth:api')->group(function () {
         Route::get('GetCart', 'api\CartController@index');
@@ -76,7 +77,10 @@ Route::prefix('Image')->middleware('throttle:1000')->group(function () {
             'monId' => $monId,
             'imgId' => 0,
         ]);
-    })->where(['size' => '[0-9]+']);
+    })->where([
+        'size' => '[0-9]+',
+        'monId' => '[0-9]+',
+    ]);
     Route::get('{size}/{monId}/{imgId}', function ($size, $monId, $imgId) {
         return redirect()->route("GetImage", [
             'width' => $size,
@@ -84,9 +88,15 @@ Route::prefix('Image')->middleware('throttle:1000')->group(function () {
             'monId' => $monId,
             'imgId' => $imgId,
         ]);
-    });
+    })->where([
+        'size' => '[0-9]+',
+        'monId' => '[0-9]+',
+        'imgId' => '[0-9]+',
+    ]);
     Route::get('{width}/{height}/{monId}/{imgId}', 'api\ImageController@show')->name('GetImage');
-    Route::get('Base64/{monId}', 'api\ImageController@ToBase64');
+    Route::prefix('Base64')->group(function(){
+        Route::get('{monId}', 'api\ImageController@ToBase64');
+        Route::get('{monId}/{imgId}', 'api\ImageController@ToBase64');
+    });
 });
 //Test
-

@@ -58,7 +58,6 @@ class ImageController extends Controller
         if (!Storage::disk()->exists($url)) {
             return response("Image Not Found", 404);
         }
-        header("Content-Type: image/png");
         $imageInfo = getimagesize(storage_path("app/$url"));
         $importFile = Storage::disk()->get($url);
         $file = imagecreatefromstring($importFile);
@@ -78,14 +77,18 @@ class ImageController extends Controller
     }
 
     /**
-     * @param $monId
+     * @param int $monId
+     * @param int $imgId
      * @return string
      * @throws FileNotFoundException
      */
-    public function ToBase64($monId)
+    public function ToBase64($monId, $imgId = 0)
     {
         ob_start();
-        $this->show(intval(300), intval(300), $monId, 0);
+        if ($imgId == 0)
+            $this->show(300, 300, $monId, $imgId);
+        else
+            $this->show(400, 400, $monId, $imgId);
         $img = ob_get_contents();
         ob_end_clean();
         return "data:image/png;base64," . base64_encode($img);

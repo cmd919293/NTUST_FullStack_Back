@@ -77,9 +77,9 @@ class ImageController extends Controller
     }
 
     /**
-     * @param int $monId
+     * @param $monId
      * @param int $imgId
-     * @return string
+     * @return \Illuminate\Http\JsonResponse
      * @throws FileNotFoundException
      */
     public function ToBase64($monId, $imgId = 0)
@@ -91,6 +91,8 @@ class ImageController extends Controller
             $this->show(400, 400, $monId, $imgId);
         $img = ob_get_contents();
         ob_end_clean();
-        return "data:image/png;base64," . base64_encode($img);
+        return response()->json([
+            'src' => "data:image/png;base64," . base64_encode($img)
+        ]);
     }
 }

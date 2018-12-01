@@ -136,12 +136,20 @@ class CartController extends Controller
     public function update(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'cart' => 'required|array'
+            'cart' => 'array'
         ]);
         if ($validator->fails()) {
             return response()->json([
                 'status' => false,
                 'message' => $validator->getMessageBag()
+            ], 400);
+        }
+        if (!$request->has('cart')) {
+            return response()->json([
+                'status' => false,
+                'message' => [
+                    'cart' => ['The cart field is required.']
+                ]
             ], 400);
         }
         $cart = $request['cart'];

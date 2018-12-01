@@ -64,7 +64,6 @@
         if (createBtn) {
             createBtn.addEventListener('click', function () {
                 let f = new FormData(this.form);
-                console.dir(this);
             });
         }
     });

@@ -15,51 +15,60 @@ use Illuminate\Support\Facades\Route;
 */
 
 //Auth Route
-Route::post('register', 'api\AuthController@register');
-Route::post('login', 'api\AuthController@login');
-Route::post('forgetPwd', 'api\AuthController@forgetPwd');
-Route::post('reset', 'api\AuthController@resetPwd');
-Route::middleware('auth:api')->group(function () {
-    Route::get('user', 'api\AuthController@me');
-    Route::get('refresh', 'api\AuthController@refresh');
-    Route::get('logout', 'api\AuthController@logout');
-    Route::post('config', 'api\AuthController@edit');
-});
-
-//Monster Route
-Route::get('GetMonstersAmount/{fsStr}', 'api\MonsterController@amount');
-Route::get('GetMonsters//{StartIndex}/{EndIndex}', function ($startId, $endId) {
-    return redirect()->route("GetMonsters", [
-        'fsString' => '*',
-        'StartIndex' => $startId,
-        'EndIndex' => $endId,
-    ]);
-});
-Route::prefix('GetMonsters')->group(function () {
-    Route::get('{index}', function ($index) {
-        return redirect()->route("GetMonsters", [
-            'fsString' => "id:$index",
-            'StartIndex' => 0,
-            'EndIndex' => 0,
-        ]);
+Route::middleware('throttle:60,1')->group(function () {
+    Route::post('register', 'api\AuthController@register');
+    Route::post('login', 'api\AuthController@login');
+    Route::post('forgetPwd', 'api\AuthController@forgetPwd');
+    Route::post('reset', 'api\AuthController@resetPwd');
+    Route::middleware('auth:api')->group(function () {
+        Route::get('user', 'api\AuthController@me');
+        Route::get('refresh', 'api\AuthController@refresh');
+        Route::get('logout', 'api\AuthController@logout');
+        Route::post('config', 'api\AuthController@edit');
     });
-    Route::get('{StartIndex}/{EndIndex}', function ($startId, $endId) {
+//AttributeName
+    Route::get('GetAttributes', 'api\AttributeNameController@index');
+//Monster Route
+    Route::get('GetMonstersAmount/{fsStr}', 'api\MonsterController@amount');
+    Route::get('GetMonsters//{StartIndex}/{EndIndex}', function ($startId, $endId) {
         return redirect()->route("GetMonsters", [
             'fsString' => '*',
             'StartIndex' => $startId,
             'EndIndex' => $endId,
         ]);
     });
-    Route::get('{fsString?}/{StartIndex?}/{EndIndex?}', 'api\MonsterController@show')
-        ->where(['StartIndex' => '[0-9]+', 'EndIndex' => '[0-9]+'])
-        ->name('GetMonsters');
+    Route::prefix('GetMonsters')->group(function () {
+        Route::get('{index}', function ($index) {
+            return redirect()->route("GetMonsters", [
+                'fsString' => "id:$index",
+                'StartIndex' => 0,
+                'EndIndex' => 0,
+            ]);
+        });
+        Route::get('{StartIndex}/{EndIndex}', function ($startId, $endId) {
+            return redirect()->route("GetMonsters", [
+                'fsString' => '*',
+                'StartIndex' => $startId,
+                'EndIndex' => $endId,
+            ]);
+        });
+        Route::get('{fsString?}/{StartIndex?}/{EndIndex?}', 'api\MonsterController@show')
+            ->where(['StartIndex' => '[0-9]+', 'EndIndex' => '[0-9]+'])
+            ->name('GetMonsters');
+    });
+    Route::middleware('admin')->group(function () {
+        Route::post('CreateMonster', 'api\MonsterController@store');
+    });
+//Cart Route
+    Route::middleware('auth:api')->group(function () {
+        Route::get('GetCart', 'api\CartController@index');
+        Route::get('GetOrders', 'api\OrderController@index');
+        Route::post('UpdateCart', 'api\CartController@update');
+        Route::post('MakeOrder', 'api\CartController@store');
+    });
 });
-Route::middleware('auth:api')->group(function () {
-    Route::post('CreateMonster', 'api\MonsterController@store');
-});
-
 //Image Route
-Route::prefix('Image')->group(function () {
+Route::prefix('Image')->middleware('throttle:1000')->group(function () {
     Route::get('{size}/{monId}/', function ($size, $monId) {
         return redirect()->route("GetImage", [
             'width' => $size,
@@ -76,17 +85,7 @@ Route::prefix('Image')->group(function () {
             'imgId' => $imgId,
         ]);
     });
-    Route::get('{width}/{height}/{monId}/{imgId}', 'api\ImageController@show')
-        ->name('GetImage');
+    Route::get('{width}/{height}/{monId}/{imgId}', 'api\ImageController@show')->name('GetImage');
 });
-
-//Cart Route
-Route::middleware('auth:api')->group(function () {
-    Route::get('GetCart', 'api\CartController@index');
-    Route::get('GetOrders', 'api\OrderController@index');
-    Route::post('UpdateCart', 'api\CartController@update');
-    Route::post('MakeOrder', 'api\CartController@store');
-});
-
 //Test
 

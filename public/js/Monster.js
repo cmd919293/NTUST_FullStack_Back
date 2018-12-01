@@ -87,7 +87,7 @@
             updateBtn.addEventListener('click', function () {
                 let f = new FormData(this.form);
                 let token = localStorage["token"];
-                fetch('../api/UpdateMonster', {
+                fetch(`${location.origin}/api/UpdateMonster`, {
                     method: 'POST',
                     headers: new Headers({
                         'Authorization': 'Bearer' + token,
@@ -99,7 +99,7 @@
                     .catch(e => console.log(e))
                     .then(r => {
                         if (r.status) {
-                            location.href = "../";
+                            location.href = location.origin;
                         }
                     });
             });

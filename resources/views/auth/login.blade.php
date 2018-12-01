@@ -7,7 +7,8 @@
                 <div class="card">
                     <div class="card-header">{{ __('Login') }}</div>
                     <div class="card-body">
-                        <form id="loginForm">
+                        <form id="loginForm" method="POST" action="{{ route('login') }}">
+                            @csrf
                             <div class="form-group row">
                                 <label for="email"
                                        class="col-sm-4 col-form-label text-md-right">{{ __('E-Mail Address') }}</label>
@@ -49,7 +50,7 @@
                             </div>
                             <div class="form-group row mb-0">
                                 <div class="col-md-8 offset-md-4">
-                                    <button type="submit" class="btn btn-primary">
+                                    <button id="loginBtn" type="submit" class="btn btn-primary">
                                         {{ __('Login') }}
                                     </button>
                                     <a class="btn btn-link" href="{{ route('password.request') }}">
@@ -63,4 +64,5 @@
             </div>
         </div>
     </div>
+    <script src="{{asset('js/login.js')}}"></script>
 @endsection

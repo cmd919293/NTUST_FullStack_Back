@@ -11,7 +11,9 @@
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
-
+    <script src="{{asset('js/login.js')}}"></script>
+    <script src="{{asset('js/register.js')}}"></script>
+    <script src="{{asset('js/logout.js')}}"></script>
     <!-- Fonts -->
     <link rel="dns-prefetch" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet" type="text/css">
@@ -55,9 +57,7 @@
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" href="{{ route('logout') }}"
-                                       onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
+                                    <a id="logoutBtn" class="dropdown-item" href="{{ route('logout') }}">
                                         {{ __('Logout') }}
                                     </a>
 

@@ -58,6 +58,8 @@ Route::middleware('throttle:60,1')->group(function () {
     });
     Route::middleware('admin')->group(function () {
         Route::post('CreateMonster', 'api\MonsterController@store');
+        Route::post('UpdateMonster', 'api\MonsterController@update');
+        Route::delete('DeleteMonster', 'api\MonsterController@destroy');
     });
     Route::get('Search/{name}', 'api\MonsterController@search');
 //Cart Route
@@ -94,7 +96,7 @@ Route::prefix('Image')->middleware('throttle:1000')->group(function () {
         'imgId' => '[0-9]+',
     ]);
     Route::get('{width}/{height}/{monId}/{imgId}', 'api\ImageController@show')->name('GetImage');
-    Route::prefix('Base64')->group(function(){
+    Route::prefix('Base64')->group(function () {
         Route::get('{monId}', 'api\ImageController@ToBase64');
         Route::get('{monId}/{imgId}', 'api\ImageController@ToBase64');
     });

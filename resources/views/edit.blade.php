@@ -3,6 +3,7 @@
 @section('content')
     <link href="{{asset('css/Monster.css')}}" rel="stylesheet" type="text/css">
     <form id="forms">
+        <input type="hidden" value="{{$monster['id']}}" name="id"/>
         <table>
             <tr>
                 <td>
@@ -100,7 +101,8 @@
                     <span id="addAttr"></span>
                     <div id="attr">
                         @foreach($monster['attributes'] as $attr)
-                            <label onclick="this.remove()" data-text="{{$attr['NAME']}}" class="attrField"><input type="hidden" value="{{$attr['value']}}" name="attributes[]"></label>
+                            <label onclick="this.remove()" data-text="{{$attr['NAME']}}" class="attrField"><input
+                                    type="hidden" value="{{$attr['value']}}" name="attributes[]"></label>
                         @endforeach
                     </div>
                 </td>
@@ -111,6 +113,14 @@
                 </td>
                 <td>
                     <input id="Price" name="price" type="text" value="{{old('price',$monster['price'])}}"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="Discount"></label>
+                </td>
+                <td>
+                    <input id="Discount" name="discount" type="text" value="{{old('discount',$monster['discount'])}}"/>
                 </td>
             </tr>
             <tr>
@@ -135,7 +145,7 @@
             <tr>
                 <td colspan="2">
                     <div>
-                        <input type="button" value="送出"/>
+                        <input id="updateMonster" type="button" value="送出"/>
                         <input type="reset" value="重置"/>
                     </div>
                 </td>

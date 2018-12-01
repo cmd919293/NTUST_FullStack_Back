@@ -38,6 +38,7 @@ class Monsters extends Model
         'image' => 'required|array'
     ];
     public const UPDATE_RULE = [
+        'id' => 'required|numeric|exists:MonsterName',
         'ATTACK' => 'required|numeric|min:0',
         'DEFENSE' => 'required|numeric|min:0',
         'HP' => 'required|numeric|min:0',
@@ -49,7 +50,9 @@ class Monsters extends Model
         'SP_DEFENSE' => 'required|numeric|min:0',
         'description' => 'required|string',
         'price' => 'required|numeric|min:1',
+        'discount' => 'required|numeric|min:1',
         'attributes' => 'required|array',
+        'image' => 'array',
         'fileControl' => 'string'
     ];
 }

@@ -187,11 +187,10 @@ class MonsterController extends Controller
 
     /**
      * @param Request $request
-     * @param $monster
      * @return \Illuminate\Http\RedirectResponse
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function update(Request $request, $monster)
+    public function update(Request $request)
     {
         $validator = Validator::make($request->all(), Monsters::UPDATE_RULE);
         if ($validator->fails()) {
@@ -200,6 +199,71 @@ class MonsterController extends Controller
                 'message' => $validator->getMessageBag()
             ], 400);
         }
+        $images = $request->file('image');
+        /** @var UploadedFile $image */
+        if ($images) {
+            foreach ($images as $image) {
+                $imgValidate = Validator::make(['image' => $image], ['image' => 'required|image']);
+                if ($imgValidate->fails()) {
+                    return response()->json([
+                        'status' => false,
+                        'message' => $imgValidate->getMessageBag()
+                    ], 400);
+                }
+            }
+        }
+        if (array_keys($request['attributes']) !== range(0, count($request['attributes']) - 1)) {
+            return response()->json([
+                'status' => false,
+                'message' => [
+                    'attributes' => 'attributes error'
+                ]
+            ], 400);
+        }
+        $monId = $request['id'];
+        //Update Monster
+        MonsterName::query()->where(['id' => $monId])
+            ->update([
+                'NAME' => $request['NAME'],
+                'NAME_EN' => $request['NAME_EN'],
+                'NAME_JP' => $request['NAME_JP']
+            ]);
+        MonsterAttributes::query()->where(['MonsterId' => $monId])
+            ->delete();
+        foreach ($request['attributes'] as $v) {
+            MonsterAttributes::query()->create([
+                'MonsterId' => $request['id'],
+                'AttributeId' => $v
+            ]);
+        }
+        $mon = Monsters::query()->where(['id' => $monId]);
+        $imgNum = $mon->get()[0]['imgNum'];
+        if ($images) $imgNum += count($images);
+        $mon->update([
+            'imgNum' => $imgNum,
+            'HP' => $request['HP'],
+            'ATTACK' => $request['ATTACK'],
+            'DEFENSE' => $request['DEFENSE'],
+            'SP_ATTACK' => $request['SP_ATTACK'],
+            'SP_DEFENSE' => $request['SP_DEFENSE'],
+            'SPEED' => $request['SPEED'],
+            'price' => $request['price'],
+            'discount' => $request['discount'],
+            'description' => $request['description'],
+        ]);
+        //Store Image
+        if ($images) {
+            foreach ($images as $k => $image) {
+                $image->storeAs("img/$monId", "$k.png");
+            }
+        }
+        return response()->json([
+            'status' => true,
+            'message' => [
+                'Data' => 'Update Success'
+            ]
+        ]);
+
     }
 
     /**
@@ -240,6 +304,11 @@ class MonsterController extends Controller
             ->join('Monsters', 'MonsterName.id', '=', 'Monsters.id')
             ->get();
         return $this->makeResponse($mon);
+    }
+
+    public function destroy($id)
+    {
+        Monsters::query()->where(['id' => $id])->delete();
     }
 
 }

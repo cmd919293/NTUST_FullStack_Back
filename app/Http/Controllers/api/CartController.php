@@ -24,7 +24,7 @@ class CartController extends Controller
         if (Auth::user()) {
             $userId = Auth::user()->getAuthIdentifier();
             $result = Cart::query()->join('Monsters', 'ProductId', '=', DB::raw('Monsters.id'))
-                ->select(['ProductId', 'Count', DB::raw('Convert(price * discount / 100, DOUBLE) as Price')])
+                ->select('ProductId', 'Count', DB::raw('Convert(price * discount / 100, DOUBLE) as Price'))
                 ->where('UserId', $userId)
                 ->get();
             return response([
@@ -82,15 +82,13 @@ class CartController extends Controller
                 $price = $product[0]['discounted'];
             }
             OrderItem::query()
-                ->create(
-                    [
-                        'OrderID' => $id,
-                        'UserID' => auth('api')->user()->getAuthIdentifier(),
-                        'ProductID' => $item['ProductID'],
-                        'Count' => $item['Count'],
-                        'Price' => $price
-                    ]
-                );
+                ->create([
+                    'OrderID' => $id,
+                    'UserID' => auth('api')->user()->getAuthIdentifier(),
+                    'ProductID' => $item['ProductID'],
+                    'Count' => $item['Count'],
+                    'Price' => $price
+                ]);
         }
         $cart->delete();
         return response()->json([

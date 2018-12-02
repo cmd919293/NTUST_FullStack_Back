@@ -15,16 +15,24 @@
     <script src="{{asset('js/register.js')}}"></script>
     <script src="{{asset('js/logout.js')}}"></script>
     @auth
-        <script src="{{asset('js/home.js')}}"></script>
+        @if(Request::is('home'))
+            <script src="{{asset('js/home.js')}}"></script>
+        @elseif(Request::is('Attribute'))
+            <script src="{{asset('js/attr.js')}}"></script>
+        @endif
     @endauth
-    <!-- Fonts -->
+<!-- Fonts -->
     <link rel="dns-prefetch" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet" type="text/css">
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     @auth
-        <link href="{{ asset('css/home.css') }}" rel="stylesheet">
+        @if(Request::is('home'))
+            <link href="{{ asset('css/home.css') }}" rel="stylesheet">
+        @elseif(Request::is('Attribute'))
+            <link href="{{ asset('css/attr.css') }}" rel="stylesheet">
+        @endif
     @endauth
 </head>
 <body>

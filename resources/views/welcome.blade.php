@@ -67,6 +67,7 @@
         <div class="top-right links">
             @auth
                 <a href="{{ url('/home') }}">Pokemon Index</a>
+                <a href="{{ url('/Attribute') }}">Attribute Index</a>
             @else
                 <a href="{{ route('login') }}">Login</a>
 
@@ -87,6 +88,7 @@
             <a href="https://github.com/cmd919293/NTUST_FullStack_Back">GitHub</a>
             @auth
                 <a href="{{ url('/home') }}">Pokemon Index</a>
+                <a href="{{ url('/Attribute') }}">Attribute Index</a>
             @endauth
         </div>
     </div>

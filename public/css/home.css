@@ -15,7 +15,7 @@ main div.container > div:empty::before {
 }
 
 main div.container > div:empty::after {
-    content: "載入中...";
+    content: "\8f09\5165\4e2d...";
     position: relative;
     display: block;
     width: 50vmin;
@@ -26,6 +26,7 @@ main div.container > div:empty::after {
     border-bottom-left-radius: .25rem;
     border-bottom-right-radius: .25rem;
     margin: 0 100%;
-    font-size: medium;
+    font-size: large;
     padding: 0.5rem;
+    font-family: monospace;
 }

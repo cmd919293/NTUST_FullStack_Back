@@ -308,6 +308,10 @@ class MonsterController extends Controller
     public function destroy($id)
     {
         Monsters::query()->where(['id' => $id])->delete();
+        return response()->json([
+            'status' => true,
+            'message' => []
+        ], 200);
     }
 
 }

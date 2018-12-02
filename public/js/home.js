@@ -1,8 +1,10 @@
 (function () {
     addEventListener('load', function () {
         let container = document.querySelector('main.py-4 .container > div');
+        let create = document.querySelector('div.create');
+        create.addEventListener('click', GoToAdd);
         GetAmount().then(r => {
-            GetAllCard(container, 0, 50, r);
+            GetAllCard(container, 800, 807, r);
         });
     });
 
@@ -13,17 +15,18 @@
         let clsBtn = document.createElement('span');
         let body = document.createElement('div');
         let hid = document.createElement('input');
-        hid.type='hidden';
-        hid.value = id;
         let img = new Image();
+        hid.type = 'hidden';
+        hid.value = id;
         card.className = 'card';
         header.className = 'card-header';
         clsBtn.className = 'close';
-        clsBtn.addEventListener('click', removeCard);
         body.className = 'card-body';
         img.width = img.height = 200;
         img.src = imgSrc;
         title.innerHTML = titleStr;
+        clsBtn.addEventListener('click', removeCard);
+        card.addEventListener('click', GoToEdit);
         body.append(img);
         header.append(title);
         header.append(clsBtn);
@@ -87,5 +90,16 @@
                 }
             });
         }
+    }
+
+    function GoToEdit() {
+        if (event.target !== this.querySelector('.close')) {
+            let id = this.querySelector('input[type=hidden]').value;
+            location.href = `${location.origin}/${id}/edit`;
+        }
+    }
+
+    function GoToAdd() {
+        location.href = `${location.origin}/create`;
     }
 })();

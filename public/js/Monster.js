@@ -65,10 +65,10 @@
             createBtn.addEventListener('click', function () {
                 let f = new FormData(this.form);
                 let token = localStorage["token"];
-                fetch('../api/CreateMonster', {
+                fetch(`${location.origin}/api/CreateMonster`, {
                     method: 'POST',
                     headers: new Headers({
-                        'Authorization': 'Bearer' + token.message.token,
+                        'Authorization': 'Bearer' + token,
                     }),
                     body: f,
                     mode: "cors",
@@ -77,7 +77,7 @@
                     .catch(e => console.log(e))
                     .then(r => {
                         if (r.status) {
-                            location.href = "../";
+                            location.href = "../home";
                         }
                     });
             });

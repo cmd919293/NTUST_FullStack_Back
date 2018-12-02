@@ -2,10 +2,14 @@
     addEventListener('load', function () {
         let container = document.querySelector('main.py-4 .container > div');
         let create = document.querySelector('div.create');
-        create.addEventListener('click', GoToAdd);
-        GetAmount().then(r => {
-            GetAllCard(container, 0, 50, r);
-        });
+        if(create) {
+            create.addEventListener('click', GoToAdd);
+        }
+        if(container) {
+            GetAmount().then(r => {
+                GetAllCard(container, 0, 50, r);
+            });
+        }
     });
 
     function createCard(titleStr, imgSrc, id) {
@@ -24,7 +28,7 @@
         body.className = 'card-body';
         img.width = img.height = 200;
         img.src = imgSrc;
-        title.innerHTML = titleStr;
+        title.dataset['text'] = titleStr;
         clsBtn.addEventListener('click', removeCard);
         card.addEventListener('click', GoToEdit);
         body.append(img);
@@ -60,7 +64,7 @@
         end = Math.min(limit, end);
         GetMonsters(start, end - 1).then(r => {
             for (let i of r) {
-                let card = createCard(`${container.childElementCount + 1}.${i['NAME']}`, i['Icon']['src'], i['id']);
+                let card = createCard(`${i['NAME']}`, i['Icon']['src'], i['id']);
                 container.append(card);
             }
             GetAllCard(container, end, end + 50, limit);

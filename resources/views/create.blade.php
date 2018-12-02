@@ -33,7 +33,7 @@
                     <label for="NAME"></label>
                 </td>
                 <td>
-                    <input id="NAME" name="NAME" type="text" value="{{old('NAME',0)}}"/>
+                    <input id="NAME" name="NAME" type="text" value="{{old('NAME')}}"/>
                 </td>
             </tr>
             <tr>
@@ -57,7 +57,7 @@
                     <label for="SPEED"></label>
                 </td>
                 <td>
-                    <input id="SPEED" name="SPEED" type="text" value="{{old('SPEED')}}"/>
+                    <input id="SPEED" name="SPEED" type="text" value="{{old('SPEED',0)}}"/>
                 </td>
             </tr>
             <tr>

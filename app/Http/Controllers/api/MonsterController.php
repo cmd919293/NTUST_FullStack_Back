@@ -10,7 +10,6 @@ use App\MonsterAttributes;
 use App\Monsters;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class MonsterController extends Controller
@@ -90,7 +89,7 @@ class MonsterController extends Controller
                 'price' => $i['price'],
                 'sold' => $i['sold'],
                 'attributes' => [],
-                'Icon' => app(ImageController::class)->ToBase64($i['id'])
+                'Icon' => json_decode(json_encode(app(ImageController::class)->ToBase64($i['id'])), true)['original']
             ];
             foreach ($attr as $j) {
                 $attrLang = [];
@@ -175,7 +174,7 @@ class MonsterController extends Controller
 
         //Store Image
         foreach ($images as $k => $image) {
-            $image->storeAs("img/$monId", "$k.png");
+            $image->storeAs("img/$monId", "$k.jpg");
         }
         return response()->json([
             'status' => true,
@@ -188,7 +187,6 @@ class MonsterController extends Controller
     /**
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
-     * @throws \Illuminate\Validation\ValidationException
      */
     public function update(Request $request)
     {
@@ -199,6 +197,31 @@ class MonsterController extends Controller
                 'message' => $validator->getMessageBag()
             ], 400);
         }
+        $monId = $request['id'];
+        $checkName = MonsterName::query()->orWhere([
+            'NAME' => $request['NAME'],
+            'NAME_JP' => $request['NAME_JP'],
+            'NAME_EN' => $request['NAME_EN'],
+        ])->get();
+        if ($checkName->isNotEmpty()) {
+            if ($checkName->count() > 1 || $checkName[0]['id'] != $monId) {
+                $msg = [];
+                if (Monsters::query()->orWhere(['NAME' => $request['NAME'], 'id' => $monId])->count() > 1) {
+                    $msg['NAME'] = 'This NAME is exists.';
+                }
+                if (Monsters::query()->orWhere(['NAME_JP' => $request['NAME_JP'], 'id' => $monId])->count() > 1) {
+                    $msg['NAME_JP'] = 'This NAME_JP is exists.';
+                }
+                if (Monsters::query()->orWhere(['NAME_EN' => $request['NAME_EN'], 'id' => $monId])->count() > 1) {
+                    $msg['NAME_EN'] = 'This NAME_EN is exists.';
+                }
+                return response()->json([
+                    'status' => false,
+                    'message' => $msg
+                ], 400);
+            }
+        }
+
         $images = $request->file('image');
         /** @var UploadedFile $image */
         if ($images) {
@@ -212,6 +235,7 @@ class MonsterController extends Controller
                 }
             }
         }
+
         if (array_keys($request['attributes']) !== range(0, count($request['attributes']) - 1)) {
             return response()->json([
                 'status' => false,
@@ -220,7 +244,7 @@ class MonsterController extends Controller
                 ]
             ], 400);
         }
-        $monId = $request['id'];
+
         //Update Monster
         MonsterName::query()->where(['id' => $monId])
             ->update([
@@ -228,14 +252,20 @@ class MonsterController extends Controller
                 'NAME_EN' => $request['NAME_EN'],
                 'NAME_JP' => $request['NAME_JP']
             ]);
-        MonsterAttributes::query()->where(['MonsterId' => $monId])
-            ->delete();
-        foreach ($request['attributes'] as $v) {
-            MonsterAttributes::query()->create([
-                'MonsterId' => $request['id'],
-                'AttributeId' => $v
-            ]);
+        $oriAttr = MonsterAttributes::query()->where(['MonsterId' => $monId])
+            ->select('AttributeId')
+            ->get()->toArray();
+        $oriAttr = array_column($oriAttr, 'AttributeId');
+        $newAttr = array_unique($request['attributes']);
+        $delAttr = array_diff($oriAttr, $newAttr);
+        $addAttr = array_diff($newAttr, $oriAttr);
+        foreach ($delAttr as $i) {
+            MonsterAttributes::query()->where(['MonsterId' => $monId, 'AttributeId' => $i])->delete();
         }
+        foreach ($addAttr as $i) {
+            MonsterAttributes::query()->create(['MonsterId' => $monId, 'AttributeId' => $i]);
+        }
+
         $mon = Monsters::query()->where(['id' => $monId]);
         $imgNum = $mon->get()[0]['imgNum'];
         if ($images) $imgNum += count($images);
@@ -309,6 +339,9 @@ class MonsterController extends Controller
     public function destroy($id)
     {
         Monsters::query()->where(['id' => $id])->delete();
+        return response()->json([
+            'status' => true,
+            'message' => []
+        ], 200);
     }
-
 }

@@ -65,29 +65,7 @@
             createBtn.addEventListener('click', function () {
                 let f = new FormData(this.form);
                 let token = localStorage["token"];
-                fetch('../api/CreateMonster', {
-                    method: 'POST',
-                    headers: new Headers({
-                        'Authorization': 'Bearer' + token.message.token,
-                    }),
-                    body: f,
-                    mode: "cors",
-                })
-                    .then(r => r.json())
-                    .catch(e => console.log(e))
-                    .then(r => {
-                        if (r.status) {
-                            location.href = "../";
-                        }
-                    });
-            });
-        }
-        let updateBtn = document.getElementById('updateMonster');
-        if (updateBtn) {
-            updateBtn.addEventListener('click', function () {
-                let f = new FormData(this.form);
-                let token = localStorage["token"];
-                fetch('../api/UpdateMonster', {
+                fetch(`${location.origin}/api/CreateMonster`, {
                     method: 'POST',
                     headers: new Headers({
                         'Authorization': 'Bearer' + token,
@@ -99,7 +77,29 @@
                     .catch(e => console.log(e))
                     .then(r => {
                         if (r.status) {
-                            location.href = "../";
+                            location.href = "../home";
+                        }
+                    });
+            });
+        }
+        let updateBtn = document.getElementById('updateMonster');
+        if (updateBtn) {
+            updateBtn.addEventListener('click', function () {
+                let f = new FormData(this.form);
+                let token = localStorage["token"];
+                fetch(`${location.origin}/api/UpdateMonster`, {
+                    method: 'POST',
+                    headers: new Headers({
+                        'Authorization': 'Bearer' + token,
+                    }),
+                    body: f,
+                    mode: "cors",
+                })
+                    .then(r => r.json())
+                    .catch(e => console.log(e))
+                    .then(r => {
+                        if (r.status) {
+                            location.href = location.origin;
                         }
                     });
             });

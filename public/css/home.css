@@ -1,0 +1,62 @@
+body {
+    counter-reset: monsterCount;
+}
+
+.card .card-header > span:first-child::before {
+    counter-increment: monsterCount;
+    content: counter(monsterCount) "." attr(data-text);
+}
+
+main div.container > div:empty::before {
+    content: "Info";
+    position: relative;
+    display: block;
+    width: 50vmin;
+    min-width: 50vmin;
+    background-color: rgba(0, 0, 0, .03);
+    border: 1px solid rgba(0, 0, 0, .125);
+    border-top-left-radius: .25rem;
+    border-top-right-radius: .25rem;
+    line-height: 2;
+    text-align: center;
+    margin: 0 100%;
+    font-size: large;
+}
+
+main div.container > div:empty::after {
+    content: "\8f09\5165\4e2d...";
+    position: relative;
+    display: block;
+    width: 50vmin;
+    min-width: 50vmin;
+    background-color: #fff;
+    border: 1px solid rgba(0, 0, 0, .125);
+    border-top: none;
+    border-bottom-left-radius: .25rem;
+    border-bottom-right-radius: .25rem;
+    margin: 0 100%;
+    font-size: large;
+    padding: 0.5rem;
+    font-family: monospace;
+}
+
+.create::after {
+    content: "+";
+    font-size: xx-large;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    margin: 3rem;
+    border: 1px solid rgba(0, 0, 0, .125);
+    text-align: center;
+    border-radius: 100%;
+    line-height: 1.5;
+    width: 1.5em;
+    background: #fff;
+    box-shadow: rgba(0, 0, 0, .125) 0 0 0px 1px;
+}
+
+.create:hover::after {
+    background: #fff;
+    box-shadow: rgb(0, 0, 0) 0 0 5px 0px;
+}

@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', '商品列表')
+@section('title', '屬性列表')
 @section('content')
     <div class="container">
         <div class="row justify-content-evenly"></div>

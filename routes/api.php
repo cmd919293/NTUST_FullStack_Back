@@ -1,6 +1,7 @@
 <?php
 
-use Illuminate\Support\Facades\Redirect;
+use App\Http\Controllers\api\ImageController;
+use App\Http\Controllers\api\MonsterController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -29,28 +30,16 @@ Route::middleware('throttle:60,1')->group(function () {
 //AttributeName
     Route::get('GetAttributes', 'api\AttributeNameController@index');
 //Monster Route
-    Route::get('GetMonstersAmount/{fsStr}', 'api\MonsterController@amount');
+    Route::get('GetMonstersAmount/{fsStr?}', 'api\MonsterController@amount');
     Route::get('GetMonsters//{StartIndex}/{EndIndex}', function ($startId, $endId) {
-        return redirect()->route("GetMonsters", [
-            'fsString' => '*',
-            'StartIndex' => $startId,
-            'EndIndex' => $endId,
-        ]);
+        return app()->make(MonsterController::class)->show('*', $startId, $endId);
     });
     Route::prefix('GetMonsters')->group(function () {
         Route::get('{index}', function ($index) {
-            return redirect()->route("GetMonsters", [
-                'fsString' => "id:$index",
-                'StartIndex' => 0,
-                'EndIndex' => 0,
-            ]);
+            return app(MonsterController::class)->show("id:$index");
         });
         Route::get('{StartIndex}/{EndIndex}', function ($startId, $endId) {
-            return redirect()->route("GetMonsters", [
-                'fsString' => '*',
-                'StartIndex' => $startId,
-                'EndIndex' => $endId,
-            ]);
+            return app(MonsterController::class)->show('*', $startId, $endId);
         });
         Route::get('{fsString?}/{StartIndex?}/{EndIndex?}', 'api\MonsterController@show')
             ->where(['StartIndex' => '[0-9]+', 'EndIndex' => '[0-9]+'])
@@ -59,7 +48,10 @@ Route::middleware('throttle:60,1')->group(function () {
     Route::middleware('admin')->group(function () {
         Route::post('CreateMonster', 'api\MonsterController@store');
         Route::post('UpdateMonster', 'api\MonsterController@update');
-        Route::delete('DeleteMonster', 'api\MonsterController@destroy');
+        Route::delete('DeleteMonster/{id}', 'api\MonsterController@destroy');
+        Route::post('CreateAttribute', 'api\AttributeNameController@store');
+        Route::post('UpdateAttribute', 'api\AttributeNameController@update');
+        Route::delete('DeleteAttribute/{id}', 'api\AttributeNameController@destroy');
     });
     Route::get('Search/{name}', 'api\MonsterController@search');
 //Cart Route
@@ -73,23 +65,13 @@ Route::middleware('throttle:60,1')->group(function () {
 //Image Route
 Route::prefix('Image')->middleware('throttle:1000')->group(function () {
     Route::get('{size}/{monId}/', function ($size, $monId) {
-        return redirect()->route("GetImage", [
-            'width' => $size,
-            'height' => $size,
-            'monId' => $monId,
-            'imgId' => 0,
-        ]);
+        return app()->make(ImageController::class)->show($size, $size, $monId, 0);
     })->where([
         'size' => '[0-9]+',
         'monId' => '[0-9]+',
     ]);
     Route::get('{size}/{monId}/{imgId}', function ($size, $monId, $imgId) {
-        return redirect()->route("GetImage", [
-            'width' => $size,
-            'height' => $size,
-            'monId' => $monId,
-            'imgId' => $imgId,
-        ]);
+        return app()->make(ImageController::class)->show($size, $size, $monId, $imgId);
     })->where([
         'size' => '[0-9]+',
         'monId' => '[0-9]+',

@@ -90,7 +90,7 @@ class MonsterController extends Controller
                 'price' => $i['price'],
                 'sold' => $i['sold'],
                 'attributes' => [],
-                'Icon' => app(ImageController::class)->ToBase64($i['id'])
+                'Icon' => json_decode(json_encode(app(ImageController::class)->ToBase64($i['id'])), true)['original']
             ];
             foreach ($attr as $j) {
                 $attrLang = [];
@@ -188,7 +188,6 @@ class MonsterController extends Controller
     /**
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
-     * @throws \Illuminate\Validation\ValidationException
      */
     public function update(Request $request)
     {

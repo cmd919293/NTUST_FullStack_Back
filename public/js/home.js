@@ -4,7 +4,7 @@
         let create = document.querySelector('div.create');
         create.addEventListener('click', GoToAdd);
         GetAmount().then(r => {
-            GetAllCard(container, 800, 807, r);
+            GetAllCard(container, 0, 50, r);
         });
     });
 

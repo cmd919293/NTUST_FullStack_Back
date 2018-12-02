@@ -31,14 +31,20 @@
     function GetAmount() {
         return fetch(`${location.origin}/api/GetMonstersAmount`)
             .then(r => r.text())
-            .catch(console.error)
+            .catch(e => {
+                console.error(e);
+                return 0;
+            })
             .then(r => parseInt(r.toString()));
     }
 
     function GetMonsters(s, e) {
         return fetch(`${location.origin}/api/GetMonsters/${s}/${e}`)
             .then(r => r.json())
-            .catch(console.error);
+            .catch(e => {
+                console.error(e);
+                return {};
+            });
     }
 
     function GetAllCard(container, start, end, limit) {
@@ -49,7 +55,7 @@
                 let card = createCard(`${i['id']}.${i['NAME']}`, i['Icon']['src']);
                 container.append(card);
             }
-            GetAllCard(container, end , end + 50, limit);
+            GetAllCard(container, end, end + 50, limit);
         });
     }
 })();

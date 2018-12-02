@@ -23,6 +23,9 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    @auth
+        <link href="{{ asset('css/home.css') }}" rel="stylesheet">
+    @endauth
 </head>
 <body>
 <div id="app">

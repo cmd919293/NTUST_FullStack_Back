@@ -19,13 +19,14 @@ class OrderController extends Controller
             ->get();
         $orders = Order::query()
             ->join('OrderItem', 'Order.id', '=', 'OrderId')
-            ->select('Address', 'Shipment', 'OrderId', 'ProductId', 'Count', 'Price')
+            ->select('Address', 'Shipment', 'OrderId', 'ProductId', 'Count', 'Price', 'order.created_at')
             ->orderBy('OrderId')
             ->get();
         $data = [];
         foreach ($orders as $item) {
             $data[$item['OrderId']]['Address'] = $item['Address'];
             $data[$item['OrderId']]['Shipment'] = boolval($item['Shipment']);
+            $data[$item['OrderId']]['created_at'] = $item['created_at']->format('c');
             $data[$item['OrderId']]['items'][] = [
                 'ProductId' => $item['ProductId'],
                 'Count' => $item['Count'],

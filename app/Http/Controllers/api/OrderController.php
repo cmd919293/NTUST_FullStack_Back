@@ -26,6 +26,12 @@ class OrderController extends Controller
         foreach ($orders as $item) {
             $data[$item['OrderId']]['Address'] = $item['Address'];
             $data[$item['OrderId']]['Shipment'] = boolval($item['Shipment']);
+            if(array_key_exists('Total', $data[$item['OrderId']])) {
+                $data[$item['OrderId']]['Total'] += $item['Count'] * $item['Price'];
+            }
+            else {
+                $data[$item['OrderId']]['Total'] = $item['Count'] * $item['Price'];
+            }
             $data[$item['OrderId']]['created_at'] = $item['created_at']->format('Y-m-d H:i:s');
             $data[$item['OrderId']]['items'][] = [
                 'ProductId' => $item['ProductId'],

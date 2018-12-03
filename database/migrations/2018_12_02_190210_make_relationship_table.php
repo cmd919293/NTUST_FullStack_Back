@@ -20,10 +20,12 @@ class MakeRelationShipTable extends Migration
         Schema::table('MonsterName', function (Blueprint $table) {
             $table->foreign('id')->references('id')->on('Monsters')->onDelete('cascade')->onUpdate('cascade');
         });
+        Schema::table('Order', function (Blueprint $table) {
+            $table->foreign('UserId')->references('id')->on('Users')->onDelete('cascade')->onUpdate('cascade');
+        });
         Schema::table('OrderItem', function (Blueprint $table) {
             $table->foreign('OrderId')->references('id')->on('Order')->onDelete('cascade')->onUpdate('cascade');
             $table->foreign('ProductId')->references('id')->on('Monsters')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreign('UserId')->references('id')->on('Users')->onDelete('cascade')->onUpdate('cascade');
         });
         Schema::table('Cart', function (Blueprint $table) {
             $table->foreign('UserId')->references('id')->on('Users')->onDelete('cascade')->onUpdate('cascade');
@@ -44,8 +46,11 @@ class MakeRelationShipTable extends Migration
         Schema::table('MonsterName', function (Blueprint $table) {
             $table->dropForeign(['id']);
         });
+        Schema::table('Order', function (Blueprint $table) {
+            $table->dropForeign(['UserId']);
+        });
         Schema::table('OrderItem', function (Blueprint $table) {
-            $table->dropForeign(['OrderId', 'ProductId', 'UserId']);
+            $table->dropForeign(['OrderId', 'ProductId']);
         });
         Schema::table('Cart', function (Blueprint $table) {
             $table->dropForeign(['ProductId', 'UserId']);

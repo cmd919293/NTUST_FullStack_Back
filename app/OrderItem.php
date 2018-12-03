@@ -8,9 +8,8 @@ class OrderItem extends Model
 {
     protected $table = "orderItem";
     protected $fillable = [
-        'OrderID',
-        'UserID',
-        'ProductID',
+        'OrderId',
+        'ProductId',
         'Count',
         'Price',
     ];

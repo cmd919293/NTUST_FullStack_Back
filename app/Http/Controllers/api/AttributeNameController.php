@@ -6,7 +6,6 @@ use App\AttributeName;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use PHPUnit\Framework\Constraint\Attribute;
 
 class AttributeNameController extends Controller
 {

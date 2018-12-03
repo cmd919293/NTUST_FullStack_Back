@@ -88,10 +88,11 @@ class CartController extends Controller
                 'message' => $validator->getMessageBag()
             ], 400);
         }
+        $Uid = auth('api')->user()->getAuthIdentifier();
         $cart = Cart::query()
-            ->where('UserID', auth('api')->user()->getAuthIdentifier())
-            ->select(['id', 'UserID', 'ProductID', 'Count'])
-            ->orderBy('ProductID');
+            ->where('UserId', $Uid)
+            ->select(['id', 'UserId', 'ProductId', 'Count'])
+            ->orderBy('ProductId');
         if ($cart->get()->isEmpty()) {
             return response()->json([
                 'status' => false,
@@ -100,12 +101,15 @@ class CartController extends Controller
                 ]
             ], 200);
         }
-        $order = Order::query()->create($request->all());
+        $order = Order::query()->create([
+            'UserId' => $Uid,
+            'Address' => $request['Address']
+        ]);
         $id = $order['id'];
         foreach ($cart->get() as $item) {
             $price = 0;
             $product = Monsters::query()
-                ->where('id', $item['ProductID'])
+                ->where('id', $item['ProductId'])
                 ->select(DB::raw('CEIL(`price` * `discount` / 100) as discounted'))
                 ->get();
             if ($product->isNotEmpty()) {
@@ -113,9 +117,8 @@ class CartController extends Controller
             }
             OrderItem::query()
                 ->create([
-                    'OrderID' => $id,
-                    'UserID' => auth('api')->user()->getAuthIdentifier(),
-                    'ProductID' => $item['ProductID'],
+                    'OrderId' => $id,
+                    'ProductId' => $item['ProductId'],
                     'Count' => $item['Count'],
                     'Price' => $price
                 ]);

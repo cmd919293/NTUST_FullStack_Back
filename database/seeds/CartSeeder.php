@@ -14,16 +14,16 @@ class CartSeeder extends Seeder
      */
     public function run()
     {
-        Cart::truncate();
+        Cart::query()->truncate();
         $monIdArray = array_map(function ($v) {
             return $v['id'];
         }, Monsters::query()->select('id')->get()->toArray());
         $userIdArray = array_map(function ($v) {
             return $v['id'];
         }, User::query()->select('id')->get()->toArray());
-        $initCount = rand(10, 100);
+        $initCount = rand(2, 10);
         while (count($userIdArray) && $initCount--) {
-            Cart::create([
+            Cart::query()->create([
                 'UserId' => $userIdArray[rand(0, count($userIdArray) - 1)],
                 'ProductId' => $monIdArray[rand(0, count($monIdArray) - 1)],
                 'Count' => rand(10, 100),

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\api;
 
 use App\Order;
-use App\OrderItem;
 use App\Http\Controllers\Controller;
 
 class OrderController extends Controller
@@ -19,7 +18,8 @@ class OrderController extends Controller
             ->get();
         $orders = Order::query()
             ->join('OrderItem', 'Order.id', '=', 'OrderId')
-            ->select('Address', 'Shipment', 'OrderId', 'ProductId', 'Count', 'Price', 'order.created_at')
+            ->join('monstername', 'monstername.id', '=', 'OrderItem.ProductId')
+            ->select('Address', 'Shipment', 'OrderId', 'ProductId', 'Count', 'Price', 'order.created_at', 'NAME')
             ->orderBy('OrderId')
             ->get();
         $data = [];
@@ -30,7 +30,9 @@ class OrderController extends Controller
             $data[$item['OrderId']]['items'][] = [
                 'ProductId' => $item['ProductId'],
                 'Count' => $item['Count'],
-                'Price' => $item['Price']
+                'Price' => $item['Price'],
+                'NAME' => $item['NAME'],
+                'Icon' => json_decode(json_encode(app(ImageController::class)->ToBase64($item['ProductId'])), true)['original']
             ];
         }
         return response()->json([

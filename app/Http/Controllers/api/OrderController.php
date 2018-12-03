@@ -13,17 +13,21 @@ class OrderController extends Controller
      */
     public function index()
     {
-        $orderItems = OrderItem::query()
-            ->where('UserID', auth('api')->user()->getAuthIdentifier())
-            ->orderBy('OrderID')
-            ->orderBy('ProductID')
-            ->orderBy('Price')
-            ->orderBy('Count')
+        $Uid = auth('api')->user()->getAuthIdentifier();
+        $order = Order::query()->where('UserId', $Uid)
+            ->orderBy('id')
+            ->get();
+        $orders = Order::query()
+            ->join('OrderItem', 'Order.id', '=', 'OrderId')
+            ->select('Address', 'Shipment', 'OrderId', 'ProductId', 'Count', 'Price')
+            ->orderBy('OrderId')
             ->get();
         $data = [];
-        foreach ($orderItems as $item) {
-            $data[$item['OrderID']][] = [
-                'ProductID' => $item['ProductID'],
+        foreach ($orders as $item) {
+            $data[$item['OrderId']]['Address'] = $item['Address'];
+            $data[$item['OrderId']]['Shipment'] = boolval($item['Shipment']);
+            $data[$item['OrderId']]['items'][] = [
+                'ProductId' => $item['ProductId'],
                 'Count' => $item['Count'],
                 'Price' => $item['Price']
             ];
@@ -31,7 +35,7 @@ class OrderController extends Controller
         return response()->json([
             'status' => true,
             'message' => [],
-            'order' => $data
+            'order' => array_values($data)
         ], 200);
     }
 

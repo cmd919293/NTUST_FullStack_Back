@@ -13,7 +13,7 @@ class AttributeNameSeeder extends Seeder
      */
     public function run()
     {
-        AttributeName::truncate();
+        AttributeName::query()->truncate();
         $file = base_path('database\seeds\MonsterDB\attributename.csv');
 		$file = str_replace('\\','/',$file);
         $query = "LOAD DATA INFILE '$file' INTO TABLE `attributename` CHARACTER SET UTF8 FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\n'";

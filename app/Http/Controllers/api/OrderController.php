@@ -26,7 +26,7 @@ class OrderController extends Controller
         foreach ($orders as $item) {
             $data[$item['OrderId']]['Address'] = $item['Address'];
             $data[$item['OrderId']]['Shipment'] = boolval($item['Shipment']);
-            $data[$item['OrderId']]['created_at'] = $item['created_at']->format('c');
+            $data[$item['OrderId']]['created_at'] = $item['created_at']->format('Y-m-d H:i:s');
             $data[$item['OrderId']]['items'][] = [
                 'ProductId' => $item['ProductId'],
                 'Count' => $item['Count'],

@@ -4,6 +4,8 @@ namespace App\Http\Controllers\api;
 
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class ImageController extends Controller

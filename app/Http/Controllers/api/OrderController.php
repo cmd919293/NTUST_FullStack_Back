@@ -18,7 +18,7 @@ class OrderController extends Controller
             ->join('OrderItem', 'Order.id', '=', 'OrderId')
             ->join('MonsterName', 'MonsterName.id', '=', 'OrderItem.ProductId')
             ->select('Address', 'Shipment', 'OrderId', 'ProductId', 'Count', 'Price', 'Order.created_at', 'NAME')
-            ->orderBy('OrderId')
+            ->orderBy('OrderId', 'desc')
             ->orderBy('ProductId')
             ->get();
         $data = [];
@@ -42,7 +42,7 @@ class OrderController extends Controller
         return response()->json([
             'status' => true,
             'message' => [],
-            'order' => array_reverse(array_values($data))
+            'order' => array_values($data)
         ], 200);
     }
 

@@ -89,7 +89,7 @@ class MonsterController extends Controller
                 'price' => $i['price'],
                 'sold' => $i['sold'],
                 'attributes' => [],
-                'Icon' => json_decode(json_encode(app(ImageController::class)->ToBase64($i['id'])), true)['original']
+                'Icon' => $this->GetIcon($i['id'])
             ];
             foreach ($attr as $j) {
                 $attrLang = [];
@@ -343,5 +343,10 @@ class MonsterController extends Controller
             'status' => true,
             'message' => []
         ], 200);
+    }
+
+    private function GetIcon($monId)
+    {
+        return json_decode(json_encode(app(ImageController::class)->ToBase64($monId)), true)['original'];
     }
 }

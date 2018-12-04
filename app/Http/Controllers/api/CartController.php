@@ -43,7 +43,7 @@ class CartController extends Controller
                     'NAME_EN' => $i['NAME_EN'],
                     'NAME_JP' => $i['NAME_JP'],
                     'attributes' => [],
-                    'Icon' => app(ImageController::class)->ToBase64($i['id'])
+                    'Icon' => json_decode(json_encode(app(ImageController::class)->ToBase64($i['id'])), true)['original']
                 ];
                 foreach ($attr as $j) {
                     $attrLang = [];

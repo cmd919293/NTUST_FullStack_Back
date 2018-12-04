@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\api;
 
 use App\Order;
-use App\OrderItem;
 use App\Http\Controllers\Controller;
 
 class OrderController extends Controller
@@ -14,22 +13,30 @@ class OrderController extends Controller
     public function index()
     {
         $Uid = auth('api')->user()->getAuthIdentifier();
-        $order = Order::query()->where('UserId', $Uid)
-            ->orderBy('id')
-            ->get();
         $orders = Order::query()
+            ->where('UserId', $Uid)
             ->join('OrderItem', 'Order.id', '=', 'OrderId')
-            ->select('Address', 'Shipment', 'OrderId', 'ProductId', 'Count', 'Price')
+            ->join('MonsterName', 'MonsterName.id', '=', 'OrderItem.ProductId')
+            ->select('Address', 'Shipment', 'OrderId', 'ProductId', 'Count', 'Price', 'Order.created_at', 'NAME')
             ->orderBy('OrderId')
+            ->orderBy('ProductId')
             ->get();
         $data = [];
         foreach ($orders as $item) {
             $data[$item['OrderId']]['Address'] = $item['Address'];
             $data[$item['OrderId']]['Shipment'] = boolval($item['Shipment']);
+            if (array_key_exists('Total', $data[$item['OrderId']])) {
+                $data[$item['OrderId']]['Total'] += $item['Count'] * $item['Price'];
+            } else {
+                $data[$item['OrderId']]['Total'] = $item['Count'] * $item['Price'];
+            }
+            $data[$item['OrderId']]['created_at'] = $item['created_at']->format('Y-m-d H:i:s');
             $data[$item['OrderId']]['items'][] = [
                 'ProductId' => $item['ProductId'],
                 'Count' => $item['Count'],
-                'Price' => $item['Price']
+                'Price' => $item['Price'],
+                'NAME' => $item['NAME'],
+                'Icon' => $this->GetIcon($item['ProductId'])
             ];
         }
         return response()->json([
@@ -52,5 +59,10 @@ class OrderController extends Controller
             'status' => true,
             'message' => []
         ], 200);
+    }
+
+    private function GetIcon($monId)
+    {
+        return json_decode(json_encode(app(ImageController::class)->ToBase64($monId)), true)['original'];
     }
 }

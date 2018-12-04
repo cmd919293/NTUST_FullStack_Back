@@ -42,7 +42,7 @@ class OrderController extends Controller
         return response()->json([
             'status' => true,
             'message' => [],
-            'order' => array_values($data)
+            'order' => array_reverse(array_values($data))
         ], 200);
     }
 

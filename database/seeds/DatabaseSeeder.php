@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
         $this->call(MonsterNameSeeder::class);
         $this->call(CartSeeder::class);
         $this->call(UserCommentTableSeeder::class);
+        $this->call(CouponSeeder::class);
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }
 }

@@ -9,6 +9,7 @@ class Order extends Model
     protected $table = "order";
     protected $fillable = [
         'Address',
-        'UserId'
+        'Phone',
+        'UserId',
     ];
 }

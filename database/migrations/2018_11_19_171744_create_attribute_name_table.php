@@ -18,6 +18,7 @@ class CreateAttributeNameTable extends Migration
             $table->string('NAME');
             $table->string('NAME_JP');
             $table->string('NAME_EN');
+            $table->string('Color');
             $table->timestamps();
         });
     }

@@ -40,6 +40,12 @@
             div.innerHTML = AttrStructure[i];
             list.append(div);
         }
+        let col = document.createElement('div');
+        col.className = 'list-group-item';
+        col.innerHTML = AttrStructure['Color'];
+        col.style.backgroundColor = AttrStructure['Color'];
+        col.style.font = '15px monospace';
+        list.append(col);
         hid.type = 'hidden';
         hid.value = AttrStructure['value'];
         card.className = 'card';

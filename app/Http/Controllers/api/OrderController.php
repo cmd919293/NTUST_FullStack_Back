@@ -30,6 +30,7 @@ class OrderController extends Controller
             } else {
                 $data[$item['OrderId']]['Total'] = $item['Count'] * $item['Price'];
             }
+            $data[$item['OrderId']]['Phone'] = $item['Phone'];
             $data[$item['OrderId']]['createdAt'] = $item['created_at']->format('Y-m-d H:i:s');
             $data[$item['OrderId']]['items'][] = [
                 'ProductId' => $item['ProductId'],

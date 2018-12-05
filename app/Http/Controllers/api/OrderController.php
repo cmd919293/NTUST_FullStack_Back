@@ -17,7 +17,7 @@ class OrderController extends Controller
             ->where('UserId', $Uid)
             ->join('OrderItem', 'Order.id', '=', 'OrderId')
             ->join('MonsterName', 'MonsterName.id', '=', 'OrderItem.ProductId')
-            ->select('Address', 'Shipment', 'OrderId', 'ProductId', 'Count', 'Price', 'Order.created_at', 'NAME')
+            ->select('Address', 'Shipment', 'OrderId', 'ProductId', 'Count', 'Price', 'Order.created_at', 'NAME', 'Phone')
             ->orderBy('OrderId', 'desc')
             ->orderBy('ProductId')
             ->get();
@@ -30,6 +30,7 @@ class OrderController extends Controller
             } else {
                 $data[$item['OrderId']]['Total'] = $item['Count'] * $item['Price'];
             }
+            $data[$item['OrderId']]['Phone'] = $item['Phone'];
             $data[$item['OrderId']]['createdAt'] = $item['created_at']->format('Y-m-d H:i:s');
             $data[$item['OrderId']]['items'][] = [
                 'ProductId' => $item['ProductId'],
@@ -44,6 +45,15 @@ class OrderController extends Controller
             'message' => [],
             'order' => array_values($data)
         ], 200);
+    }
+
+    public function getAll()
+    {
+        $replies = Order::query()->paginate(5);
+        $data = [
+            'replies' => $replies,
+        ];
+        return view('listOrder', $data);
     }
 
     /**

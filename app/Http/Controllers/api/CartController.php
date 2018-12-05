@@ -53,6 +53,7 @@ class CartController extends Controller
                         }
                     }
                     $attrLang['value'] = $j['id'];
+                    $attrLang['Color'] = $j['Color'];
                     array_push($data['attributes'], $attrLang);
                 }
                 array_push($result, $data);
@@ -80,7 +81,8 @@ class CartController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'Address' => 'required|string'
+            'Address' => 'required|string',
+            'Phone' => ['required', 'regex:/09\d{8}/']
         ]);
         if ($validator->fails()) {
             return response()->json([
@@ -103,7 +105,8 @@ class CartController extends Controller
         }
         $order = Order::query()->create([
             'UserId' => $Uid,
-            'Address' => $request['Address']
+            'Phone' => $request['Phone'],
+            'Address' => $request['Address'],
         ]);
         $id = $order['id'];
         foreach ($cart->get() as $item) {

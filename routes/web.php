@@ -47,3 +47,5 @@ Route::prefix('Attribute')->group(function () {
         return view('editAttribute', ['attribute' => $attr]);
     });
 });
+
+Route::get('OrderList', 'api\OrderController@getAll');

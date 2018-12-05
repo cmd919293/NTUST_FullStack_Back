@@ -9,6 +9,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
@@ -157,6 +158,9 @@ class AuthController extends Controller
             'email' => $request['email']
         ]);
         $url .= "/auth/resetPwd/$token";
+        Mail::send('pwdMail', ['url' => $url], function ($message) use ($request) {
+            $message->to($request['email'])->subject('PokemonShop Password Reset');
+        });
         //sent mail
         return response()->json([
             'status' => true,

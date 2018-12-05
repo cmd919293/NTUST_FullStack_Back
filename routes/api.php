@@ -15,8 +15,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-//Auth Route
 Route::middleware('throttle:60,1')->group(function () {
+//Auth Route
     Route::post('register', 'api\AuthController@register');
     Route::post('login', 'api\AuthController@login');
     Route::post('forgetPwd', 'api\AuthController@forgetPwd');
@@ -27,6 +27,8 @@ Route::middleware('throttle:60,1')->group(function () {
         Route::get('logout', 'api\AuthController@logout');
         Route::post('config', 'api\AuthController@edit');
     });
+});
+Route::middleware('throttle:500,1')->group(function () {
 //AttributeName
     Route::get('GetAttributes', 'api\AttributeNameController@index');
 //Monster Route
@@ -67,25 +69,27 @@ Route::middleware('throttle:60,1')->group(function () {
         Route::post('WriteComment', 'api\UserCommentController@store');
     });
 });
+Route::middleware('throttle:1000,1')->group(function () {
 //Image Route
-Route::prefix('Image')->middleware('throttle:1000')->group(function () {
-    Route::get('{size}/{monId}/', function ($size, $monId) {
-        return app()->make(ImageController::class)->show($size, $size, $monId, 0);
-    })->where([
-        'size' => '[0-9]+',
-        'monId' => '[0-9]+',
-    ]);
-    Route::get('{size}/{monId}/{imgId}', function ($size, $monId, $imgId) {
-        return app()->make(ImageController::class)->show($size, $size, $monId, $imgId);
-    })->where([
-        'size' => '[0-9]+',
-        'monId' => '[0-9]+',
-        'imgId' => '[0-9]+',
-    ]);
-    Route::get('{width}/{height}/{monId}/{imgId}', 'api\ImageController@show')->name('GetImage');
-    Route::prefix('Base64')->group(function () {
-        Route::get('{monId}', 'api\ImageController@ToBase64');
-        Route::get('{monId}/{imgId}', 'api\ImageController@ToBase64');
+    Route::prefix('Image')->middleware('throttle:1000')->group(function () {
+        Route::get('{size}/{monId}/', function ($size, $monId) {
+            return app()->make(ImageController::class)->show($size, $size, $monId, 0);
+        })->where([
+            'size' => '[0-9]+',
+            'monId' => '[0-9]+',
+        ]);
+        Route::get('{size}/{monId}/{imgId}', function ($size, $monId, $imgId) {
+            return app()->make(ImageController::class)->show($size, $size, $monId, $imgId);
+        })->where([
+            'size' => '[0-9]+',
+            'monId' => '[0-9]+',
+            'imgId' => '[0-9]+',
+        ]);
+        Route::get('{width}/{height}/{monId}/{imgId}', 'api\ImageController@show')->name('GetImage');
+        Route::prefix('Base64')->group(function () {
+            Route::get('{monId}', 'api\ImageController@ToBase64');
+            Route::get('{monId}/{imgId}', 'api\ImageController@ToBase64');
+        });
     });
 });
 //Test

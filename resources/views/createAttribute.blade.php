@@ -29,6 +29,14 @@
                 </td>
             </tr>
             <tr>
+                <td>
+                    <label for="Color"></label>
+                </td>
+                <td>
+                    <input id="Color" name="Color" type="color" value="{{old('Color')}}"/>
+                </td>
+            </tr>
+            <tr>
                 <td colspan="2">
                     <div>
                         <input id="createAttribute" type="button" value="送出"/>

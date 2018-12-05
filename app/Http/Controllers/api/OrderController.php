@@ -18,7 +18,7 @@ class OrderController extends Controller
             ->join('OrderItem', 'Order.id', '=', 'OrderId')
             ->join('MonsterName', 'MonsterName.id', '=', 'OrderItem.ProductId')
             ->select('Address', 'Shipment', 'OrderId', 'ProductId', 'Count', 'Price', 'Order.created_at', 'NAME')
-            ->orderBy('OrderId')
+            ->orderBy('OrderId', 'desc')
             ->orderBy('ProductId')
             ->get();
         $data = [];
@@ -30,7 +30,7 @@ class OrderController extends Controller
             } else {
                 $data[$item['OrderId']]['Total'] = $item['Count'] * $item['Price'];
             }
-            $data[$item['OrderId']]['created_at'] = $item['created_at']->format('Y-m-d H:i:s');
+            $data[$item['OrderId']]['createdAt'] = $item['created_at']->format('Y-m-d H:i:s');
             $data[$item['OrderId']]['items'][] = [
                 'ProductId' => $item['ProductId'],
                 'Count' => $item['Count'],

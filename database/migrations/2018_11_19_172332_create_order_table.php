@@ -18,6 +18,7 @@ class CreateOrderTable extends Migration
             $table->unsignedInteger('UserId');
             $table->string('Address');
             $table->boolean('Shipment')->default(false);
+            $table->string('Phone');
             $table->timestamps();
         });
     }

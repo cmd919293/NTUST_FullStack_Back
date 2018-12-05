@@ -41,7 +41,8 @@ class AttributeNameController extends Controller
         AttributeName::query()->create([
             'NAME' => $request['NAME'],
             'NAME_EN' => $request['NAME_EN'],
-            'NAME_JP' => $request['NAME_JP']
+            'NAME_JP' => $request['NAME_JP'],
+            'Color' => $request['Color'],
         ]);
         return response()->json([
             'status' => true,
@@ -88,7 +89,8 @@ class AttributeNameController extends Controller
             ->update([
                 'NAME' => $request['NAME'],
                 'NAME_EN' => $request['NAME_EN'],
-                'NAME_JP' => $request['NAME_JP']
+                'NAME_JP' => $request['NAME_JP'],
+                'Color' => $request['Color'],
             ]);
         return response()->json([
             'status' => true,

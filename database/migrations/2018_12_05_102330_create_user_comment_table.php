@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateAttributeNameTable extends Migration
+class CreateUserCommentTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,11 @@ class CreateAttributeNameTable extends Migration
      */
     public function up()
     {
-        Schema::create('AttributeName', function (Blueprint $table) {
+        Schema::create('user_comment', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('NAME');
-            $table->string('NAME_JP');
-            $table->string('NAME_EN');
-            $table->string('Color');
+            $table->unsignedInteger('UserId');
+            $table->unsignedInteger('ProductId');
+            $table->string('Comment');
             $table->timestamps();
         });
     }
@@ -30,6 +29,6 @@ class CreateAttributeNameTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('AttributeName');
+        Schema::dropIfExists('user_comment');
     }
 }

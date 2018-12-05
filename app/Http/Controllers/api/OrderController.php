@@ -49,7 +49,7 @@ class OrderController extends Controller
 
     public function getAll()
     {
-        $replies = Order::query()->with('User')->paginate(1);
+        $replies = Order::query()->paginate(5);
         $data = [
             'replies' => $replies,
         ];

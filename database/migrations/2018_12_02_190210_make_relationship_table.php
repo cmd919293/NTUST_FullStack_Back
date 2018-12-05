@@ -41,19 +41,24 @@ class MakeRelationShipTable extends Migration
     public function down()
     {
         Schema::table('MonsterAttributes', function (Blueprint $table) {
-            $table->dropForeign(['MonsterId', 'AttributeId']);
+            foreach (['MonsterId', 'AttributeId'] as $key)
+                $table->dropForeign([$key]);
         });
         Schema::table('MonsterName', function (Blueprint $table) {
-            $table->dropForeign(['id']);
+            foreach (['id'] as $key)
+                $table->dropForeign([$key]);
         });
         Schema::table('Order', function (Blueprint $table) {
-            $table->dropForeign(['UserId']);
+            foreach (['UserId'] as $key)
+                $table->dropForeign([$key]);
         });
         Schema::table('OrderItem', function (Blueprint $table) {
-            $table->dropForeign(['OrderId', 'ProductId']);
+            foreach (['OrderId', 'ProductId'] as $key)
+                $table->dropForeign([$key]);
         });
         Schema::table('Cart', function (Blueprint $table) {
-            $table->dropForeign(['ProductId', 'UserId']);
+            foreach (['ProductId', 'UserId'] as $key)
+                $table->dropForeign([$key]);
         });
     }
 }

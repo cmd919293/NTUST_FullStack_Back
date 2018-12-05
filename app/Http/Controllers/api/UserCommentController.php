@@ -22,7 +22,7 @@ class UserCommentController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -53,7 +53,7 @@ class UserCommentController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function show(Request $request)
@@ -67,30 +67,23 @@ class UserCommentController extends Controller
                 'message' => $validator->getMessageBag()
             ], 400);
         }
-        $result = [];
         $comments = UserComment::query()
             ->where('ProductId', '=', $request['ProductId'])
+            ->select('UserId', 'Comment', 'created_at as createdAt')
+            ->orderBy('createdAt', 'desc')
             ->get();
-        foreach ($comments as $comment) {
-            $data = [
-                'UserId' => $comment['UserId'],
-                'Comment' => $comment['Comment'],
-                'createdAt' => $comment['created_at']->format('Y-m-d H:i:s')
-            ];
-            array_push($result, $data);
-        }
         return response([
             'status' => true,
             'message' => [],
-            'comment' => $result
+            'comment' => $comments
         ], 200);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\UserComment  $userComment
+     * @param  \Illuminate\Http\Request $request
+     * @param  \App\UserComment $userComment
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, UserComment $userComment)
@@ -101,7 +94,7 @@ class UserCommentController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\UserComment  $userComment
+     * @param  \App\UserComment $userComment
      * @return \Illuminate\Http\Response
      */
     public function destroy(UserComment $userComment)

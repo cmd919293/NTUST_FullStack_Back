@@ -61,6 +61,11 @@ Route::middleware('throttle:60,1')->group(function () {
         Route::post('UpdateCart', 'api\CartController@update');
         Route::post('MakeOrder', 'api\CartController@store');
     });
+//Comment Route
+    Route::get('GetComment', 'api\UserCommentController@show');
+    Route::middleware('auth:api')->group(function () {
+        Route::post('WriteComment', 'api\UserCommentController@store');
+    });
 });
 //Image Route
 Route::prefix('Image')->middleware('throttle:1000')->group(function () {

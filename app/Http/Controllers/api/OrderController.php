@@ -47,6 +47,15 @@ class OrderController extends Controller
         ], 200);
     }
 
+    public function getAll()
+    {
+        $replies = Order::query()->with('User')->paginate(1);
+        $data = [
+            'replies' => $replies,
+        ];
+        return view('listOrder', $data);
+    }
+
     /**
      * Display the specified resource.
      *

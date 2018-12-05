@@ -17,7 +17,7 @@ class OrderController extends Controller
             ->where('UserId', $Uid)
             ->join('OrderItem', 'Order.id', '=', 'OrderId')
             ->join('MonsterName', 'MonsterName.id', '=', 'OrderItem.ProductId')
-            ->select('Address', 'Shipment', 'OrderId', 'ProductId', 'Count', 'Price', 'Order.created_at', 'NAME')
+            ->select('Address', 'Shipment', 'OrderId', 'ProductId', 'Count', 'Price', 'Order.created_at', 'NAME', 'Phone')
             ->orderBy('OrderId', 'desc')
             ->orderBy('ProductId')
             ->get();

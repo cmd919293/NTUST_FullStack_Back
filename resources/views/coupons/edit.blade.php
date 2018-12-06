@@ -3,7 +3,7 @@
 @section('content')
 <div>
     <div class="box-header with-border">
-        <h3 class="box-title">編輯商品</h3>
+        <h3 class="box-title">優惠券編輯</h3>
     </div>
     <form action="{{ route('coupon.update', $coupon->id) }}" method="post">
         @csrf

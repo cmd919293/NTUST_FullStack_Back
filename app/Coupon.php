@@ -13,6 +13,7 @@ class Coupon extends Model
     ];
 
     protected $fillable = [
+        'Name',
         'UserId',
         'OrderId',
         'Discount',
@@ -21,4 +22,12 @@ class Coupon extends Model
         'Owned',
         'Used'
     ];
+
+    public function User(){
+        return $this->belongsTo(User::class,'UserId','id');
+    }
+
+    public function Order(){
+        return $this->belongsTo(Order::class,'OrderId','id');
+    }
 }

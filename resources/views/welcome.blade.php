@@ -91,6 +91,7 @@
             @auth
                 @if(auth()->user()->permission==0)
                 <a href="{{ url('/customer-reply') }}">Customer Reply</a>
+                <a href="{{ url('/comment') }}">Comments</a>
                 @endif
                 <a href="{{ url('/home') }}">Pokemon Index</a>
                 <a href="{{ url('/Attribute') }}">Attribute Index</a>

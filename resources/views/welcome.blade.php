@@ -68,6 +68,7 @@
             @auth
                 <a href="{{ url('/home') }}">Pokemon Index</a>
                 <a href="{{ url('/Attribute') }}">Attribute Index</a>
+                <a href="{{ url('/OrderList') }}">Order List</a>
             @else
                 <a href="{{ route('login') }}">Login</a>
 
@@ -89,6 +90,7 @@
             @auth
                 <a href="{{ url('/home') }}">Pokemon Index</a>
                 <a href="{{ url('/Attribute') }}">Attribute Index</a>
+                <a href="{{ url('/OrderList') }}">Order List</a>
             @endauth
         </div>
     </div>

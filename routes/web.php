@@ -39,13 +39,15 @@ Route::get('/{id}/edit', function ($id) {
 
 Route::prefix('Attribute')->group(function () {
     Route::get('/', 'HomeController@attr')->name('attribute');
-    Route::get('create', function(){
+    Route::get('create', function () {
         return view('createAttribute');
     });
-    Route::get('{id}/edit', function($id){
+    Route::get('{id}/edit', function ($id) {
         $attr = app(AttributeNameController::class)->show($id);
         return view('editAttribute', ['attribute' => $attr]);
     });
 });
 
-Route::get('OrderList', 'api\OrderController@getAll');
+Route::middleware('auth')->group(function () {
+    Route::get('OrderList', 'api\OrderController@getAll');
+});

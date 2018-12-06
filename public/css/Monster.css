@@ -9,11 +9,11 @@
     background: #fff !important;
 }
 
-#forms tr:nth-child(even) * {
+#forms tr:nth-child(even) *:not([class='close']) {
     background: #f8fafc;
 }
 
-#forms tr:nth-child(odd) * {
+#forms tr:nth-child(odd) *:not([class='close']) {
     background: #e8eafc;
 }
 
@@ -145,4 +145,17 @@
     height: 0;
     margin: 0 0.5rem;
     min-width: 200px;
+}
+
+#oriImg img + span[class='close'] {
+    visibility: hidden;
+}
+
+#oriImg img:hover + span[class='close'], #oriImg img + span[class='close']:hover {
+    visibility: visible;
+}
+
+#oriImg span[class='close'] {
+    position: relative;
+    left: -1.35rem;
 }

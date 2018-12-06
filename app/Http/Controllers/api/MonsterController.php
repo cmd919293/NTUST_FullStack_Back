@@ -10,6 +10,7 @@ use App\MonsterAttributes;
 use App\Monsters;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class MonsterController extends Controller
@@ -88,6 +89,7 @@ class MonsterController extends Controller
                 'imgNum' => $i['imgNum'],
                 'price' => $i['price'],
                 'sold' => $i['sold'],
+                'finalPrice' => ceil($i['price'] * $i['discount'] / 100),
                 'attributes' => [],
                 'Icon' => $this->GetIcon($i['id'])
             ];
@@ -268,7 +270,17 @@ class MonsterController extends Controller
 
         $mon = Monsters::query()->where(['id' => $monId]);
         $imgNum = $mon->get()[0]['imgNum'];
-        if ($images) $imgNum += count($images);
+        if ($request->has('fileControl')) {
+            $imgNum = $this->UpdateImage($request['fileControl'], $monId, $imgNum);
+        }
+        //Store Image
+        if ($images) {
+            foreach ($images as $k => $image) {
+                if($image->storeAs("img/$monId", "$imgNum.jpg")){
+                    $imgNum++;
+                }
+            }
+        }
         $mon->update([
             'imgNum' => $imgNum,
             'HP' => $request['HP'],
@@ -281,19 +293,12 @@ class MonsterController extends Controller
             'discount' => $request['discount'],
             'description' => $request['description'],
         ]);
-        //Store Image
-        if ($images) {
-            foreach ($images as $k => $image) {
-                $image->storeAs("img/$monId", "$k.png");
-            }
-        }
         return response()->json([
             'status' => true,
             'message' => [
                 'Data' => 'Update Success'
             ]
         ]);
-
     }
 
     /**
@@ -348,5 +353,50 @@ class MonsterController extends Controller
     private function GetIcon($monId)
     {
         return json_decode(json_encode(app(ImageController::class)->ToBase64($monId)), true)['original'];
+    }
+
+    private function UpdateImageParser($str, $imgNum)
+    {
+        $charArray = array_map(function ($i) use ($str) {
+            return mb_substr($str, $i, 1);
+        }, range(0, mb_strlen($str)));
+        $temp = array_fill(0, $imgNum, 'o');
+        $imgId = 0;
+        $action = 'o';
+        foreach ($charArray as $ch) {
+            $num = intval($ch);
+            if ($num != 0 || $ch == '0') {
+                $imgId = $imgId * 10 + $num;
+            } else {
+                if ($imgId < $imgNum && $action != 'o') {
+                    $temp[$imgId] = $action;
+                }
+                $action = $ch;
+                $imgId = 0;
+            }
+        }
+        return $temp;
+    }
+
+    private function UpdateImage($str, $monId, $imgNum)
+    {
+        $temp = $this->UpdateImageParser($str, $imgNum);
+        $id = 0;
+        foreach ($temp as $k => $v) {
+            $url = "img/$monId/$k.jpg";
+            if (Storage::disk()->exists($url)) {
+                if ($v == 'r') {
+                    Storage::disk()->delete($url);
+                    $id--;
+                } else if ($id != $k) {
+                    $newUrl = "img/$monId/$id.jpg";
+                    if (!Storage::disk()->exists($newUrl)) {
+                        Storage::disk()->move($url, $newUrl);
+                    }
+                }
+                $id++;
+            }
+        }
+        return $id;
     }
 }

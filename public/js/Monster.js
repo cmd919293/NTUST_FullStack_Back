@@ -104,5 +104,18 @@
                     });
             });
         }
+        let reOriImg = document.querySelectorAll("#oriImg span[class='close']");
+        let fileControl = document.getElementById('fileControl');
+        if (fileControl) {
+            reOriImg.forEach(function (cls) {
+                cls.addEventListener('click', function () {
+                    let reg = /\d+$/.exec(this.previousElementSibling.src);
+                    if(reg) {
+                        fileControl.value += `r${reg[0]}`;
+                        this.parentElement.remove();
+                    }
+                });
+            });
+        }
     });
 })();

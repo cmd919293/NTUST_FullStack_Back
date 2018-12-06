@@ -16,7 +16,7 @@ class AttributeNameSeeder extends Seeder
         AttributeName::query()->truncate();
         $file = base_path('database\seeds\MonsterDB\attributename.csv');
 		$file = str_replace('\\','/',$file);
-        $query = "LOAD DATA INFILE '$file' INTO TABLE `attributename` CHARACTER SET UTF8 FIELDS TERMINATED BY ',' ENCLOSED BY '\\\"' LINES TERMINATED BY '\\r\\n'";
+        $query = "LOAD DATA INFILE '$file' INTO TABLE `attributename` CHARACTER SET UTF8 FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\n'";
         DB::connection()->getpdo()->exec($query);
     }
 }

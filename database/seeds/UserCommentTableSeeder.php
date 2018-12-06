@@ -1,5 +1,4 @@
 <?php
-
 use App\UserComment;
 use App\Monsters;
 use App\User;

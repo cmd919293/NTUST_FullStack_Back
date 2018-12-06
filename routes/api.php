@@ -15,8 +15,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('throttle:60,1')->group(function () {
+\Illuminate\Support\Facades\Log::info('Called API');
 //Auth Route
+Route::middleware('throttle:100,1')->group(function (){
     Route::post('register', 'api\AuthController@register');
     Route::post('login', 'api\AuthController@login');
     Route::post('forgetPwd', 'api\AuthController@forgetPwd');
@@ -26,6 +27,8 @@ Route::middleware('throttle:60,1')->group(function () {
         Route::get('refresh', 'api\AuthController@refresh');
         Route::get('logout', 'api\AuthController@logout');
         Route::post('config', 'api\AuthController@edit');
+        //Customer-Repl
+        Route::post('customer-reply','api\CustomerReplyController@store');
     });
 });
 Route::middleware('throttle:500,1')->group(function () {
@@ -76,6 +79,10 @@ Route::middleware('throttle:500,1')->group(function () {
     });
 });
 Route::middleware('throttle:1000,1')->group(function () {
+    Route::get('GetCart', 'api\CartController@index');
+    Route::get('GetOrders', 'api\OrderController@index');
+    Route::post('UpdateCart', 'api\CartController@update');
+    Route::post('MakeOrder', 'api\CartController@store');
 //Image Route
     Route::prefix('Image')->middleware('throttle:1000')->group(function () {
         Route::get('{size}/{monId}/', function ($size, $monId) {

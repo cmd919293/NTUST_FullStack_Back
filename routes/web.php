@@ -20,38 +20,51 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Auth::routes();
+Route::Auth();
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::middleware('admin')->group(function () {
+    Route::get('/home', 'HomeController@index')->name('home');
 
-Route::get('/create', function () {
-    $data = app(AttributeNameController::class)->index();
-    $data = json_decode(json_encode($data), true);
-    return view('create', ['attrs' => $data['original']]);
-})->name('create');
-Route::get('/{id}/edit', function ($id) {
-    $data = app(AttributeNameController::class)->index();
-    $data = json_decode(json_encode($data), true);
-    $mon = app(MonsterController::class)->show("id:$id");
-    $mon = json_decode(json_encode($mon), true);
-    return view('edit', ['attrs' => $data['original'], 'monster' => $mon[0]]);
-})->name('edit');
+    Route::get('/create', function () {
+        $data = app(AttributeNameController::class)->index();
+        $data = json_decode(json_encode($data), true);
+        return view('create', ['attrs' => $data['original']]);
+    })->name('create');
 
-Route::prefix('Attribute')->group(function () {
-    Route::get('/', 'HomeController@attr')->name('attribute');
-    Route::get('create', function () {
-        return view('createAttribute');
+    Route::get('/{id}/edit', function ($id) {
+        $data = app(AttributeNameController::class)->index();
+        $data = json_decode(json_encode($data), true);
+        $mon = app(MonsterController::class)->show("id:$id");
+        $mon = json_decode(json_encode($mon), true);
+        return view('edit', ['attrs' => $data['original'], 'monster' => $mon[0]]);
+    })->name('edit');
+
+    Route::prefix('Attribute')->group(function () {
+        Route::get('/', 'HomeController@attr')->name('attribute');
+        Route::get('create', function () {
+            return view('createAttribute');
+        });
+        Route::get('{id}/edit', function ($id) {
+            $attr = app(AttributeNameController::class)->show($id);
+            return view('editAttribute', ['attribute' => $attr]);
+        });
     });
-    Route::get('{id}/edit', function ($id) {
-        $attr = app(AttributeNameController::class)->show($id);
-        return view('editAttribute', ['attribute' => $attr]);
-    });
-});
-
-Route::middleware('auth')->group(function () {
     Route::get('OrderList', 'api\OrderController@getAll');
+
+    Route::prefix('customer-reply')->group(function (){
+        Route::get('/','CustomerReplyController@index')->name('customer-reply.index');
+        Route::get('{customerReply}/reply','CustomerReplyController@reply')->name('customer-reply.reply');
+        Route::patch('{customerReply}','CustomerReplyController@update')->name('customer-reply.update');
+        Route::get('read/{customerReply}','CustomerReplyController@read')->name('customer-reply.read');
+    });
+
     Route::get('Coupon', 'CouponController@index')->name('coupon.index');
     Route::get('Coupon/{coupon}/edit', 'CouponController@edit')->name('coupon.edit');
     Route::patch('Coupon/{coupon}', 'CouponController@edit')->name('coupon.update');
     Route::delete('Coupon/{coupon}', 'CouponController@destroy')->name('coupon.destroy');
+});
+
+
+Route::prefix('customer-reply')->group(function () {
+    Route::get('read/{customerReply}', 'CustomerReplyController@read')->middleware('auth')->name('customer-reply.read');
 });

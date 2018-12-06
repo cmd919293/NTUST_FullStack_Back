@@ -29,7 +29,7 @@ class UserCommentController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'ProductId' => 'required|numeric',
-            'Comment' => 'required|string'
+            'Comment' => 'required|string|max:300'
         ]);
         if ($validator->fails()) {
             return response()->json([
@@ -68,8 +68,9 @@ class UserCommentController extends Controller
             ], 400);
         }
         $comments = UserComment::query()
+            ->select('name as Username', 'Comment', 'user_comment.created_at as createdAt')
+            ->join('users','user_comment.UserId','=','users.id')
             ->where('ProductId', '=', $request['ProductId'])
-            ->select('UserId', 'Comment', 'created_at as createdAt')
             ->orderBy('createdAt', 'desc')
             ->get();
         return response([

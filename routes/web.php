@@ -50,4 +50,8 @@ Route::prefix('Attribute')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('OrderList', 'api\OrderController@getAll');
+    Route::get('Coupon', 'CouponController@index')->name('coupon.index');
+    Route::get('Coupon/{coupon}/edit', 'CouponController@edit')->name('coupon.edit');
+    Route::patch('Coupon/{coupon}', 'CouponController@edit')->name('coupon.update');
+    Route::delete('Coupon/{coupon}', 'CouponController@destroy')->name('coupon.destroy');
 });

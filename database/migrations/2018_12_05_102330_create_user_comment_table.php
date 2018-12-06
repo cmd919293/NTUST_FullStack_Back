@@ -17,7 +17,7 @@ class CreateUserCommentTable extends Migration
             $table->increments('id');
             $table->unsignedInteger('UserId');
             $table->unsignedInteger('ProductId');
-            $table->string('Comment');
+            $table->string('Comment', 600);
             $table->timestamps();
         });
     }

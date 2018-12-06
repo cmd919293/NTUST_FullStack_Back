@@ -19,6 +19,8 @@
             <script src="{{asset('js/home.js')}}"></script>
         @elseif(Request::is('Attribute'))
             <script src="{{asset('js/attr.js')}}"></script>
+        @elseif(Request::is('OrderList'))
+            <script src="{{asset('js/order.js')}}"></script>
         @endif
     @endauth
 <!-- Fonts -->
@@ -32,6 +34,8 @@
             <link href="{{ asset('css/home.css') }}" rel="stylesheet">
         @elseif(Request::is('Attribute'))
             <link href="{{ asset('css/attr.css') }}" rel="stylesheet">
+        @elseif(Request::is('OrderList'))
+            <link href="{{asset('css/order.css')}}" rel="stylesheet">
         @endif
     @endauth
 </head>

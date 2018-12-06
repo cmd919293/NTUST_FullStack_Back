@@ -20,7 +20,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-
+Route::Auth();
 
 Route::middleware('admin')->group(function () {
     Route::get('/home', 'HomeController@index')->name('home');
@@ -59,3 +59,6 @@ Route::middleware('admin')->group(function () {
     });
 });
 
+Route::prefix('customer-reply')->group(function () {
+    Route::get('read/{customerReply}', 'CustomerReplyController@read')->middleware('auth')->name('customer-reply.read');
+});

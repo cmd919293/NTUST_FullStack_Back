@@ -34,8 +34,8 @@ class CustomerReplyController extends Controller
      */
     public function store(Request $request)
     {
-        $imageNum = count($request->image);
 
+        $imageNum = $request->image == null ? 0 : count($request->image);
         $id =  CustomerReply::create(['userID'=> auth('api')->user()->id,'imageNum' => $imageNum , 'resolved' => false ])->id;
         $prefix = 'customer-reply/'.$id.'/';
         //save text

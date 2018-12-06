@@ -13,12 +13,9 @@
 "> </div>
         <div class="reply_container" style="text-align: center">
             登入的使用者不正確,請重新登入
-            <form id="logout-form" action="{{ route('logout') }}" method="POST">
-                        @csrf
-                <button type="submit" class="sub_button">
-                    切換使用者
-                </button>
-            </form>
+            <a href="{{ route('customer-reply.redirect',$id) }}" class="sub_button">
+                切換使用者
+            </a>
         </div>
 
     </div>

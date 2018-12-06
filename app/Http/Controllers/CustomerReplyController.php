@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\CustomerReply;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
@@ -114,7 +115,8 @@ class CustomerReplyController extends Controller
      */
     public function read(CustomerReply $customerReply){
         if(auth()->user()->id != $customerReply->userID){
-            return view('email.wrong-user');
+            $data = [ 'id'=>$customerReply->id];
+            return view('email.wrong-user',$data);
         }
         else if(!($customerReply->resolved)){
             return view('email.error');
@@ -155,5 +157,12 @@ class CustomerReplyController extends Controller
     public function destroy(CustomerReply $customerReply)
     {
         //reserved
+    }
+
+
+    public function redirect(CustomerReply $customerReply){
+        Auth::logout();
+
+        return redirect()->route('customer-reply.read',['customerReply' => $customerReply->id ]);
     }
 }

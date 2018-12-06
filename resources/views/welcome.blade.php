@@ -5,7 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Pokemon Shop</title>
     <script src="{{asset('js/login.js')}}"></script>
-    <!-- Fonts -->
+    @auth
+    <script src="{{asset('js/logout.js')}}"></script>
+    @endauth
+<!-- Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet" type="text/css">
     <!-- Styles -->
     <style>
@@ -59,6 +62,26 @@
         .m-b-md {
             margin-bottom: 30px;
         }
+
+        @auth
+        .user + a {
+            display: none;
+            position: inherit;
+            right: 0;
+            top: calc(5px + 1rem);
+            border: 1px solid #ccc;
+            line-height: 2;
+            border-radius: .25rem;
+        }
+
+        .user:hover + a {
+            display: initial;
+        }
+
+        .user + a:hover {
+            display: initial;
+        }
+        @endauth
     </style>
 </head>
 <body>
@@ -72,9 +95,15 @@
                 <a href="{{ url('/home') }}">Pokemon Index</a>
                 <a href="{{ url('/Attribute') }}">Attribute Index</a>
 
+                <a href="{{ url('/OrderList') }}">Order List</a>
+                <a href="#" class="user">{{ Auth::user()->name }}</a>
+                <a id="logoutBtn" href="#">{{ __('Logout') }}</a>
+                <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                      style="display: none;">
+                    @csrf
+                </form>
             @else
                 <a href="{{ route('login') }}">Login</a>
-
                 @if (Route::has('register'))
                     <a href="{{ route('register') }}">Register</a>
                 @endif
@@ -93,6 +122,7 @@
             @auth
                 <a href="{{ url('/home') }}">Pokemon Index</a>
                 <a href="{{ url('/Attribute') }}">Attribute Index</a>
+                <a href="{{ url('/OrderList') }}">Order List</a>
             @endauth
         </div>
     </div>

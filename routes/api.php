@@ -57,6 +57,7 @@ Route::middleware('throttle:500,1')->group(function () {
         Route::post('CreateAttribute', 'api\AttributeNameController@store');
         Route::post('UpdateAttribute', 'api\AttributeNameController@update');
         Route::delete('DeleteAttribute/{id}', 'api\AttributeNameController@destroy');
+        Route::get('Shipment/{id}', 'api\OrderController@send');
     });
     Route::get('Search/{name}', 'api\MonsterController@search');
 //Cart Route

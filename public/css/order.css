@@ -1,0 +1,130 @@
+@charset "UTF8";
+
+.order-cell, .item-cell {
+    border-right: 1px solid #ccc;
+    display: table-cell;
+    padding: 0.5rem;
+    border-top: 1px solid #ccc;
+}
+
+.order-cell:first-child, .item-cell:first-child {
+    text-align: center;
+}
+
+.order-cell:last-child, .item-cell:last-child {
+    border-right: none;
+    text-align: center;
+}
+
+.order-id, .order-shipment, .order-createdAt, .order-phone, .order-address {
+    border-top: none;
+}
+
+.order-id {
+    width: 5%;
+    max-width: 3rem;
+    min-width: 3rem;
+}
+
+.order-shipment {
+    width: 10%;
+    max-width: 8rem;
+    min-width: 8rem;
+    text-align: center;
+}
+
+.order-createdAt {
+    width: 15%;
+    max-width: 11rem;
+    min-width: 11rem;
+    margin-right: 0;
+}
+
+.order-phone {
+    width: 15%;
+    max-width: 8rem;
+    min-width: 8rem;
+}
+
+.order-address {
+    width: 55%;
+}
+
+.order-shipment-status {
+    border-style: solid;
+    box-shadow: inset #fff 0 0px 0px 1.5px;
+    font-size: small;
+}
+
+.order-shipment-status[value='已出貨'] {
+    border-color: #00d700;
+    background-color: #00d700;
+}
+
+.order-shipment-status[value='未出貨'] {
+    border-color: #ffd700;
+    background-color: #ffd700;
+}
+
+.order-show-items {
+    border-style: solid;
+    border-width: .8em .5em 0 .5em;
+    border-color: #000 transparent transparent transparent;
+    display: inline-flex;
+}
+
+input[type='radio'] {
+    display: none;
+}
+
+.item-id {
+    width: 10%;
+    text-align: center;
+}
+
+.item-img {
+    width: 40%;
+    min-width: 300px;
+    text-align: center;
+}
+
+.item-price {
+    width: 20%;
+    text-align: left;
+}
+
+.item-count {
+    width: 10%;
+    text-align: left;
+}
+
+.item-total {
+    width: 20%;
+    text-align: left;
+}
+
+input[type='radio'] + table {
+    display: none;
+}
+
+input[type='radio']:checked + table {
+    display: table;
+}
+
+.item-table {
+    width: 100%;
+}
+
+.footer-form {
+    border-top: 1px solid #ccc;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.footer-form * {
+    border: 1px solid #999;
+    margin: .5rem;
+    padding: .25rem;
+    background: #eee;
+}

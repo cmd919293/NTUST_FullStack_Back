@@ -22,35 +22,35 @@ Route::get('/', function () {
 
 
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::middleware('admin')->group(function () {
+    Route::get('/home', 'HomeController@index')->name('home');
 
-Route::get('/create', function () {
-    $data = app(AttributeNameController::class)->index();
-    $data = json_decode(json_encode($data), true);
-    return view('create', ['attrs' => $data['original']]);
-})->name('create');
-Route::get('/{id}/edit', function ($id) {
-    $data = app(AttributeNameController::class)->index();
-    $data = json_decode(json_encode($data), true);
-    $mon = app(MonsterController::class)->show("id:$id");
-    $mon = json_decode(json_encode($mon), true);
-    return view('edit', ['attrs' => $data['original'], 'monster' => $mon[0]]);
-})->name('edit');
+    Route::get('/create', function () {
+        $data = app(AttributeNameController::class)->index();
+        $data = json_decode(json_encode($data), true);
+        return view('create', ['attrs' => $data['original']]);
+    })->name('create');
 
-Route::prefix('Attribute')->group(function () {
-    Route::get('/', 'HomeController@attr')->name('attribute');
-    Route::get('create', function(){
-        return view('createAttribute');
+    Route::get('/{id}/edit', function ($id) {
+        $data = app(AttributeNameController::class)->index();
+        $data = json_decode(json_encode($data), true);
+        $mon = app(MonsterController::class)->show("id:$id");
+        $mon = json_decode(json_encode($mon), true);
+        return view('edit', ['attrs' => $data['original'], 'monster' => $mon[0]]);
+    })->name('edit');
+
+    Route::prefix('Attribute')->group(function () {
+        Route::get('/', 'HomeController@attr')->name('attribute');
+        Route::get('create', function () {
+            return view('createAttribute');
+        });
+        Route::get('{id}/edit', function ($id) {
+            $attr = app(AttributeNameController::class)->show($id);
+            return view('editAttribute', ['attribute' => $attr]);
+        });
     });
-    Route::get('{id}/edit', function($id){
-        $attr = app(AttributeNameController::class)->show($id);
-        return view('editAttribute', ['attribute' => $attr]);
-    });
+    Route::get('OrderList', 'api\OrderController@getAll');
 
-});
-
-
-Route::middleware(['auth','admin'])->group(function(){
     Route::prefix('customer-reply')->group(function (){
         Route::get('/','CustomerReplyController@index')->name('customer-reply.index');
         Route::get('{customerReply}/reply','CustomerReplyController@reply')->name('customer-reply.reply');
@@ -59,14 +59,3 @@ Route::middleware(['auth','admin'])->group(function(){
     });
 });
 
-Auth::routes();
-
-//Route::get('sendmail', function() {
-//    $data = ['name' => 'Test'];
-//    Mail::send('email.customer-reply', $data, function($message) {
-//        $message->to('vhanxtreme@gmail.com')->subject('This is test email');
-//    });
-//    return 'Your email has been sent successfully!';
-//});
-
-Route::get('OrderList', 'api\OrderController@getAll');

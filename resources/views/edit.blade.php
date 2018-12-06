@@ -126,9 +126,13 @@
             <tr>
                 <td><label for="Original Image"></label></td>
                 <td>
+                    <input id="fileControl" name="fileControl" type="hidden" value="-" />
                     <div id="oriImg">
                         @for($i = 0; $i < $monster['imgNum']; $i++)
-                            <img src="../api/Image/300/200/{{$monster['id']}}/{{$i}}"/>
+                            <div>
+                                <img src="../api/Image/300/200/{{$monster['id']}}/{{$i}}"/>
+                                <span class="close"></span>
+                            </div>
                         @endfor
                     </div>
                 </td>

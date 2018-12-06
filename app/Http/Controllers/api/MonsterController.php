@@ -88,6 +88,7 @@ class MonsterController extends Controller
                 'imgNum' => $i['imgNum'],
                 'price' => $i['price'],
                 'sold' => $i['sold'],
+                'finalPrice' => ceil($i['price'] * $i['discount'] / 100),
                 'attributes' => [],
                 'Icon' => $this->GetIcon($i['id'])
             ];

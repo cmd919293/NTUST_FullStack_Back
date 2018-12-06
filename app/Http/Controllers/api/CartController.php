@@ -23,54 +23,46 @@ class CartController extends Controller
      */
     public function index()
     {
-        if (Auth::user()) {
-            $userId = Auth::user()->getAuthIdentifier();
-            $result = [];
-            $carts = Cart::query()
-                ->join('MonsterName', 'ProductId', '=', 'MonsterName.id')
-                ->join('Monsters', 'ProductId', '=', 'Monsters.id')
-                ->select('ProductId', 'Count', DB::raw('CEIL(price * discount / 100) as Price'), 'MonsterName.*')
-                ->where('UserId', $userId)
+        $userId = auth('api')->user()->getAuthIdentifier();
+        $result = [];
+        $carts = Cart::query()
+            ->join('MonsterName', 'ProductId', '=', 'MonsterName.id')
+            ->join('Monsters', 'ProductId', '=', 'Monsters.id')
+            ->select('ProductId', 'Count', DB::raw('CEIL(price * discount / 100) as Price'), 'MonsterName.*')
+            ->where('UserId', $userId)
+            ->get();
+        foreach ($carts as $i) {
+            $attr = MonsterAttributes::query()->where('MonsterId', $i['ProductId'])
+                ->join('AttributeName', 'AttributeName.id', '=', 'MonsterAttributes.AttributeID')
                 ->get();
-            foreach ($carts as $i) {
-                $attr = MonsterAttributes::query()->where('MonsterId', $i['ProductId'])
-                    ->join('AttributeName', 'AttributeName.id', '=', 'MonsterAttributes.AttributeID')
-                    ->get();
-                $data = [
-                    'ProductId' => $i['ProductId'],
-                    'Count' => $i['Count'],
-                    'Price' => $i['Price'],
-                    'NAME' => $i['NAME'],
-                    'NAME_EN' => $i['NAME_EN'],
-                    'NAME_JP' => $i['NAME_JP'],
-                    'attributes' => [],
-                    'Icon' => json_decode(json_encode(app(ImageController::class)->ToBase64($i['id'])), true)['original']
-                ];
-                foreach ($attr as $j) {
-                    $attrLang = [];
-                    foreach ($j->getAttributes() as $k => $v) {
-                        if (strpos(strtolower($k), 'name') === 0) {
-                            $attrLang[$k] = $v;
-                        }
+            $data = [
+                'ProductId' => $i['ProductId'],
+                'Count' => $i['Count'],
+                'Price' => $i['Price'],
+                'NAME' => $i['NAME'],
+                'NAME_EN' => $i['NAME_EN'],
+                'NAME_JP' => $i['NAME_JP'],
+                'attributes' => [],
+                'Icon' => json_decode(json_encode(app(ImageController::class)->ToBase64($i['id'])), true)['original']
+            ];
+            foreach ($attr as $j) {
+                $attrLang = [];
+                foreach ($j->getAttributes() as $k => $v) {
+                    if (strpos(strtolower($k), 'name') === 0) {
+                        $attrLang[$k] = $v;
                     }
-                    $attrLang['value'] = $j['id'];
-                    $attrLang['Color'] = $j['Color'];
-                    array_push($data['attributes'], $attrLang);
                 }
-                array_push($result, $data);
+                $attrLang['value'] = $j['id'];
+                $attrLang['Color'] = $j['Color'];
+                array_push($data['attributes'], $attrLang);
             }
-            return response([
-                'status' => true,
-                'message' => [],
-                'cart' => $result
-            ], 200);
-        } else {
-            return response([
-                'status' => false,
-                'message' => [],
-                'cart' => []
-            ], 403);
+            array_push($result, $data);
         }
+        return response([
+            'status' => true,
+            'message' => [],
+            'cart' => $result
+        ], 200);
     }
 
     /**

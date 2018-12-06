@@ -13,11 +13,10 @@ class MonsterSeeder extends Seeder
      */
     public function run()
     {
-
         Monsters::query()->truncate();
-        $file = base_path('database/seeds/MonsterDB/monster.csv');
+        $file = base_path('database\seeds\MonsterDB\monster.csv');
         $file = str_replace('\\','/',$file);
-        $query = "LOAD DATA INFILE '$file' INTO TABLE `Monsters` CHARACTER SET UTF8 FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\n'";
+        $query = "LOAD DATA INFILE '$file' INTO TABLE `Monsters` CHARACTER SET UTF8 FIELDS TERMINATED BY ',' ENCLOSED BY '\\\"' LINES TERMINATED BY '\\r\\n'";
         DB::connection()->getpdo()->exec($query);
     }
 }

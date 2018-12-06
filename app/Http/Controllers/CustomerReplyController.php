@@ -116,6 +116,7 @@ class CustomerReplyController extends Controller
     public function read(CustomerReply $customerReply){
         if(auth()->user()->id != $customerReply->userID){
             $data = [ 'id'=>$customerReply->id];
+
             return view('email.wrong-user',$data);
         }
         else if(!($customerReply->resolved)){
@@ -159,10 +160,10 @@ class CustomerReplyController extends Controller
         //reserved
     }
 
-
     public function redirect(CustomerReply $customerReply){
         Auth::logout();
 
         return redirect()->route('customer-reply.read',['customerReply' => $customerReply->id ]);
+
     }
 }

@@ -68,6 +68,11 @@ Route::middleware('throttle:500,1')->group(function () {
     Route::middleware('auth:api')->group(function () {
         Route::post('WriteComment', 'api\UserCommentController@store');
     });
+//Coupon Route
+    Route::middleware('auth:api')->group(function () {
+        Route::get('ListCoupon', 'api\CouponController@index');
+        Route::post('GetCoupon', 'api\CouponController@store');
+    });
 });
 Route::middleware('throttle:1000,1')->group(function () {
 //Image Route

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\api;
 
 use App\Cart;
+use App\Coupon;
 use App\MonsterAttributes;
 use App\Monsters;
 use App\Order;
@@ -82,7 +83,8 @@ class CartController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'Address' => 'required|string',
-            'Phone' => ['required', 'regex:/09\d{8}/']
+            'Phone' => ['required', 'regex:/09\d{8}/'],
+            'Coupons' => 'required|array'
         ]);
         if ($validator->fails()) {
             return response()->json([
@@ -127,6 +129,17 @@ class CartController extends Controller
                 ]);
         }
         $cart->delete();
+        foreach($request['Coupons'] as $CouponId) {
+            Coupon::query()
+                ->where('id', '=', $CouponId)
+                ->where('UserId', '=', $Uid)
+                ->where('Used','=',false)
+                ->whereDate('expired_at', '>=', $order['created_at'])
+                ->update([
+                    'OrderId' => $id,
+                    'Used' => true
+                ]);
+        }
         return response()->json([
             'status' => true,
             'message' => []

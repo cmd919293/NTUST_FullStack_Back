@@ -7,12 +7,17 @@ use Illuminate\Database\Eloquent\Model;
 class Coupon extends Model
 {
     protected $table = "coupon";
+
+    protected $dates = [
+        'expired_at'
+    ];
+
     protected $fillable = [
         'UserId',
         'OrderId',
         'Discount',
         'Token',
-        'expire_at',
+        'expired_at',
         'Owned',
         'Used'
     ];

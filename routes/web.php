@@ -55,7 +55,6 @@ Route::middleware('admin')->group(function () {
         Route::get('/','CustomerReplyController@index')->name('customer-reply.index');
         Route::get('{customerReply}/reply','CustomerReplyController@reply')->name('customer-reply.reply');
         Route::patch('{customerReply}','CustomerReplyController@update')->name('customer-reply.update');
-        Route::get('read/{customerReply}','CustomerReplyController@read')->name('customer-reply.read');
     });
 
     Route::get('Coupon', 'CouponController@index')->name('coupon.index');
@@ -65,6 +64,7 @@ Route::middleware('admin')->group(function () {
 });
 
 
-Route::prefix('customer-reply')->group(function () {
-    Route::get('read/{customerReply}', 'CustomerReplyController@read')->middleware('auth')->name('customer-reply.read');
+Route::prefix('customer-reply')->middleware('auth')->group(function () {
+    Route::get('read/{customerReply}', 'CustomerReplyController@read')->name('customer-reply.read');
+    Route::get('redirect/{customerReply}','CustomerReplyController@redirect')->name('customer-reply.redirect');
 });

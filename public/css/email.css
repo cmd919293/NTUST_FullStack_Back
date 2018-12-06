@@ -57,9 +57,12 @@
     color: white;
     font-size: 15px;
     font-weight: 600;
+    padding: 3px;
     margin: 15px;
     border: 0px solid;
     border-radius: 0.5em;
+    text-decoration: none;
+
 }
 .reply_block {
     padding: 15px;

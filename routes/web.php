@@ -20,7 +20,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Auth::routes();
+
 
 Route::get('/home', 'HomeController@index')->name('home');
 
@@ -46,6 +46,27 @@ Route::prefix('Attribute')->group(function () {
         $attr = app(AttributeNameController::class)->show($id);
         return view('editAttribute', ['attribute' => $attr]);
     });
+
 });
+
+
+Route::middleware(['auth','admin'])->group(function(){
+    Route::prefix('customer-reply')->group(function (){
+        Route::get('/','CustomerReplyController@index')->name('customer-reply.index');
+        Route::get('{customerReply}/reply','CustomerReplyController@reply')->name('customer-reply.reply');
+        Route::patch('{customerReply}','CustomerReplyController@update')->name('customer-reply.update');
+        Route::get('read/{customerReply}','CustomerReplyController@read')->name('customer-reply.read');
+    });
+});
+
+Auth::routes();
+
+//Route::get('sendmail', function() {
+//    $data = ['name' => 'Test'];
+//    Mail::send('email.customer-reply', $data, function($message) {
+//        $message->to('vhanxtreme@gmail.com')->subject('This is test email');
+//    });
+//    return 'Your email has been sent successfully!';
+//});
 
 Route::get('OrderList', 'api\OrderController@getAll');

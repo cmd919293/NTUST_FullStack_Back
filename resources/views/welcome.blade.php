@@ -66,8 +66,12 @@
     @if (Route::has('login'))
         <div class="top-right links">
             @auth
+                @if(auth()->user()->permission==0)
+                <a href="{{ url('/customer-reply') }}">Customer Reply</a>
+                @endif
                 <a href="{{ url('/home') }}">Pokemon Index</a>
                 <a href="{{ url('/Attribute') }}">Attribute Index</a>
+
             @else
                 <a href="{{ route('login') }}">Login</a>
 

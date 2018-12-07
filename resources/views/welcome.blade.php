@@ -90,12 +90,12 @@
         <div class="top-right links">
             @auth
                 @if(auth()->user()->permission==0)
-                <a href="{{ url('/customer-reply') }}">Customer Reply</a>
+                    <a href="{{ url('/Coupon') }}">Coupon</a>
+                    <a href="{{ url('/customer-reply') }}">Customer Reply</a>
+                    <a href="{{ url('/home') }}">Pokemon Index</a>
+                    <a href="{{ url('/Attribute') }}">Attribute Index</a>
+                    <a href="{{ url('/OrderList') }}">Order List</a>
                 @endif
-                <a href="{{ url('/home') }}">Pokemon Index</a>
-                <a href="{{ url('/Attribute') }}">Attribute Index</a>
-
-                <a href="{{ url('/OrderList') }}">Order List</a>
                 <a href="#" class="user">{{ Auth::user()->name }}</a>
                 <a id="logoutBtn" href="#">{{ __('Logout') }}</a>
                 <form id="logout-form" action="{{ route('logout') }}" method="POST"

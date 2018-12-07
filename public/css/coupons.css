@@ -1,0 +1,99 @@
+.cr_table {
+    width: 100%;
+}
+.cr_table tr{
+    border-bottom: 1px solid gray;
+    height: 60px;
+    /*margin-left: 20px;*/
+}
+
+.cr_table tr td{
+    text-align: center;
+    vert-align: middle;
+    padding: 0px 15px;
+}
+.cr_table tr th{
+    text-align: center;
+    vert-align: middle;
+    padding: 0px 15px;
+}
+
+.cr_pager {
+    max-width: 90%;
+    margin: 10px auto;
+}
+
+div.reply_container{
+    width: 90%;
+    height: 700px;
+    min-width: 500px;
+    /*padding-bottom: 100px;*/
+    margin: 0px auto;
+}
+div.replyblock{
+    display: inline-block;
+    width: 33%;
+    padding: 10px 20px;
+    height: 100%;
+    float: left;
+}
+
+div.replyblock.text{
+    height: 50%;
+}
+
+div.replyblock.img-container{
+
+}
+
+div.replyblock textarea{
+    margin: auto 0px;
+    width: 100%;
+    padding: 10px;
+    height: 100%;
+    resize: none;
+    display: inline-block;
+    border-radius: 1em;
+    font-size: 18px;
+}
+.imgnone{
+    display: none;
+}
+.img-container{
+    border: 5px solid black;
+    border-radius: 2em;
+    text-align: center;
+    height: 90%;
+    /*background-color: black;*/
+}
+
+.img-scroll{
+    overflow-y:scroll;
+}
+
+
+.btnSend{
+    margin: 10px auto;
+    max-width: 100px;
+    height: 50px;
+    /*background-color: black;*/
+}
+.btnSend button[type=submit]{
+    -webkit-appearance: none;
+    height: 100%;
+    width: 100%;
+    background-color: #f7fafc;
+    border-radius: 1.0em;
+    font-weight: 500;
+}
+
+.btnSend button[type=submit]:hover{
+    background-color:black;
+    color:white;
+    transition: all 0.5s ease 0s;
+}
+
+.btnSend button[type=submit]{
+
+}
+

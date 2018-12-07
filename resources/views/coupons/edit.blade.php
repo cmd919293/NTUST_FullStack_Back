@@ -58,7 +58,7 @@
         </div>
 
         <div class="box-footer text-right">
-            <a class="btn btn-link" href="#">取消</a>
+            <a class="btn btn-link" href="{{ route('coupon.edit', $coupon->id) }}">取消</a>
             <button type="submit" class="btn btn-primary">更新</button>
         </div>
     </form>

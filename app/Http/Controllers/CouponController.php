@@ -18,6 +18,33 @@ class CouponController extends Controller
         return view('coupons.index', $data);
     }
 
+    public function create()
+    {
+        return view('coupons.create');
+    }
+
+    public function store(Request $request)
+    {
+        $this->validate($request, [
+            'Name' => 'required|string|max:12',
+            'Discount' => 'required|integer',
+            'Token' => 'required|string|min:32|max:40',
+            'expired_at' => 'required|date_format:Y-m-d\TH:i'
+        ]);
+
+        $request['UserId'] = 0;
+        $request['OrderId'] = 0;
+        $request['expired_at'] = date('Y-m-d H:i:s', strtotime($request['expired_at']));
+        $request['Owned'] = false;
+        $request['Used'] = false;
+
+//        dd($request);
+
+        Coupon::create($request->all());
+
+        return redirect()->route('coupon.index');
+    }
+
     public function edit(Coupon $coupon)
     {
         $data = [

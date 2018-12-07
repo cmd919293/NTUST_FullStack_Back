@@ -9,6 +9,7 @@
             <tr>
                 <th>ID</th>
                 <th>票券名稱</th>
+                <th>折扣</th>
                 <th>有效時間</th>
                 <th>建立時間</th>
                 <th>管理功能</th>
@@ -17,6 +18,7 @@
                 <tr>
                     <td>{{ $coupon->id }}</td>
                     <td>{{ $coupon->Name }}</td>
+                    <td>{{ $coupon->Discount }}</td>
                     <td>{{ $coupon->expired_at }}</td>
                     <td>{{ $coupon->created_at }}</td>
                     <td>

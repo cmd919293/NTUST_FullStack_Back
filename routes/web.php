@@ -58,6 +58,8 @@ Route::middleware('admin')->group(function () {
     });
 
     Route::get('Coupon', 'CouponController@index')->name('coupon.index');
+    Route::get('Coupon/create', 'CouponController@create')->name('coupon.create');
+    Route::post('Coupon', 'CouponController@store')->name('coupon.store');
     Route::get('Coupon/{coupon}/edit', 'CouponController@edit')->name('coupon.edit');
     Route::patch('Coupon/{coupon}', 'CouponController@update')->name('coupon.update');
     Route::delete('Coupon/{coupon}', 'CouponController@destroy')->name('coupon.destroy');

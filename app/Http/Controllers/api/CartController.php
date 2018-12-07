@@ -76,7 +76,7 @@ class CartController extends Controller
         $validator = Validator::make($request->all(), [
             'Address' => 'required|string',
             'Phone' => ['required', 'regex:/09\d{8}/'],
-            'Coupons' => 'required|array'
+            'Coupons' => 'array'
         ]);
         if ($validator->fails()) {
             return response()->json([

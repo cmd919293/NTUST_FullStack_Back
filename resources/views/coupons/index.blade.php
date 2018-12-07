@@ -34,6 +34,8 @@
         </table>
     </div>
 
+    <a class="floatBtn" href="{{ route('coupon.create') }}">+</a>
+
     <div class="cr_pager">
         {{  $coupons->render() }}
     </div>

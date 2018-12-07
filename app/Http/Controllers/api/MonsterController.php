@@ -66,7 +66,7 @@ class MonsterController extends Controller
                     'Monsters.id', '=', 'MA2.MonsterId'
                 );
         }
-        return $monQuery;
+        return $monQuery->distinct();
     }
 
     /**

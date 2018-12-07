@@ -23,6 +23,7 @@ class Coupon extends Model
         'Used'
     ];
 
+
     public function User(){
         return $this->belongsTo(User::class,'UserId','id');
     }

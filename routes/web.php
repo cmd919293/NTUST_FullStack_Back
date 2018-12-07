@@ -65,7 +65,11 @@ Route::middleware('admin')->group(function () {
         Route::patch('{coupon}', 'CouponController@update')->name('coupon.update');
         Route::delete('{coupon}', 'CouponController@destroy')->name('coupon.destroy');
     });
-
+    
+    Route::prefix('comment')->group(function (){
+        Route::get('/','UserCommentController@index')->name('user-comment.index');
+        Route::delete('{userComment}/destroy','UserCommentController@destroy')->name('user-comment.destroy');
+    });
 });
 
 

@@ -55,4 +55,11 @@ class Monsters extends Model
         'image' => 'array',
         'fileControl' => 'string'
     ];
+
+    public function Names(){
+        return $this->belongsTo(MonsterName::class,'id','id');
+    }
+    public function Attributes(){
+        return $this->hasMany(MonsterName::class,'MonsterId','id');
+    }
 }

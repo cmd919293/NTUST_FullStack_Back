@@ -95,6 +95,7 @@
                     <a href="{{ url('/home') }}">Pokemon Index</a>
                     <a href="{{ url('/Attribute') }}">Attribute Index</a>
                     <a href="{{ url('/OrderList') }}">Order List</a>
+                    <a href="{{ url('/comment') }}">Comments</a>
                 @endif
                 <a href="#" class="user">{{ Auth::user()->name }}</a>
                 <a id="logoutBtn" href="#">{{ __('Logout') }}</a>

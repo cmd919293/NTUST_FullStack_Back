@@ -12,4 +12,11 @@ class UserComment extends Model
         'ProductId',
         'Comment'
     ];
+
+    public function User(){
+        return $this->belongsTo(User::class,'UserId','id');
+    }
+    public function Product(){
+        return $this->belongsTo(Monsters::class,'ProductId','id');
+    }
 }

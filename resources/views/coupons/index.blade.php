@@ -10,6 +10,7 @@
                 <th>ID</th>
                 <th>票券名稱</th>
                 <th>折扣</th>
+                <th>使用狀況</th>
                 <th>有效時間</th>
                 <th>建立時間</th>
                 <th>管理功能</th>
@@ -19,6 +20,11 @@
                     <td>{{ $coupon->id }}</td>
                     <td>{{ $coupon->Name }}</td>
                     <td>{{ $coupon->Discount }}</td>
+                    @if ($coupon['Used'])
+                        <td>已使用</td>
+                    @else
+                        <td>未使用</td>
+                    @endif
                     <td>{{ $coupon->expired_at }}</td>
                     <td>{{ $coupon->created_at }}</td>
                     <td>

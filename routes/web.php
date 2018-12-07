@@ -51,18 +51,21 @@ Route::middleware('admin')->group(function () {
     });
     Route::get('OrderList', 'api\OrderController@getAll');
 
-    Route::prefix('customer-reply')->group(function (){
-        Route::get('/','CustomerReplyController@index')->name('customer-reply.index');
+    Route::prefix('customer-reply')->group(function () {
+        Route::get('','CustomerReplyController@index')->name('customer-reply.index');
         Route::get('{customerReply}/reply','CustomerReplyController@reply')->name('customer-reply.reply');
         Route::patch('{customerReply}','CustomerReplyController@update')->name('customer-reply.update');
     });
 
-    Route::get('Coupon', 'CouponController@index')->name('coupon.index');
-    Route::get('Coupon/create', 'CouponController@create')->name('coupon.create');
-    Route::post('Coupon', 'CouponController@store')->name('coupon.store');
-    Route::get('Coupon/{coupon}/edit', 'CouponController@edit')->name('coupon.edit');
-    Route::patch('Coupon/{coupon}', 'CouponController@update')->name('coupon.update');
-    Route::delete('Coupon/{coupon}', 'CouponController@destroy')->name('coupon.destroy');
+    Route::prefix('Coupon')->group(function () {
+        Route::get('', 'CouponController@index')->name('coupon.index');
+        Route::get('create', 'CouponController@create')->name('coupon.create');
+        Route::post('', 'CouponController@store')->name('coupon.store');
+        Route::get('{coupon}/edit', 'CouponController@edit')->name('coupon.edit');
+        Route::patch('{coupon}', 'CouponController@update')->name('coupon.update');
+        Route::delete('{coupon}', 'CouponController@destroy')->name('coupon.destroy');
+    });
+
 });
 
 

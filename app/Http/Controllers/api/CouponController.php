@@ -20,8 +20,7 @@ class CouponController extends Controller
     {
         $data = [];
         $userId = Auth::user()->getAuthIdentifier();
-        $coupons = Coupon::query()
-            ->where('UserId','=', $userId)
+        $coupons = Coupon::where('UserId','=', $userId)
             ->where('Used', '=', false)
             ->where('expired_at', '>=', date("Y-m-d H:i:s"))
             ->get();

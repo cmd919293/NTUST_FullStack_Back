@@ -121,7 +121,7 @@ class CartController extends Controller
                     'Price' => $price
                 ]);
 
-            $totalPrice += $price;
+            $totalPrice += $price * $item['Count'];
         }
         $cart->delete();
         foreach($request['Coupons'] as $CouponId) {
@@ -133,12 +133,12 @@ class CartController extends Controller
                 ->get();
 
             if ($coupon->isNotEmpty() && $totalPrice - $coupon[0]['Discount'] >= 0) {
-                $coupon->update([
+                $coupon[0]->update([
                     'OrderId' => $id,
                     'Used' => true
                 ]);
 
-                $totalPrice -= $coupon['Discount'];
+                $totalPrice -= $coupon[0]['Discount'];
             }
         }
         return response()->json([

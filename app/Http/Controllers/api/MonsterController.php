@@ -35,10 +35,10 @@ class MonsterController extends Controller
             }
         }
         $preQuery = MonsterAttributes::query();
-        if (count($filterList) != 0) $preQuery = $preQuery->whereIn('AttributeID', $filterList);
+        if (count($filterList) != 0) $preQuery = $preQuery->whereIn('AttributeId', $filterList);
         $preQuery = $preQuery->select('MonsterId')->distinct();
         $monQuery = Monsters::query()
-            ->joinSub($preQuery, 'MonsterAttributes',
+            ->leftJoinSub($preQuery, 'MonsterAttributes',
                 'Monsters.id', '=', 'MonsterAttributes.MonsterId');
         foreach ($orderList as $v) {
             if ($v == 'newest') {
@@ -57,6 +57,14 @@ class MonsterController extends Controller
         }
         if ($filterPrice) {
             $monQuery = $monQuery->whereBetween($discounted, $filterPriceRange);
+        }
+        if (count($filterList) != 0) {
+            $newRule = MonsterAttributes::query()
+                ->whereIn('AttributeId', $filterList);
+            $monQuery = $monQuery
+                ->joinSub($newRule, 'MA2',
+                    'Monsters.id', '=', 'MA2.MonsterId'
+                );
         }
         return $monQuery;
     }
@@ -277,7 +285,7 @@ class MonsterController extends Controller
         //Store Image
         if ($images) {
             foreach ($images as $k => $image) {
-                if($image->storeAs("img/$monId", "$imgNum.jpg")){
+                if ($image->storeAs("img/$monId", "$imgNum.jpg")) {
                     $imgNum++;
                 }
             }

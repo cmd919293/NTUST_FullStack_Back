@@ -38,7 +38,7 @@ class MonsterController extends Controller
         if (count($filterList) != 0) $preQuery = $preQuery->whereIn('AttributeID', $filterList);
         $preQuery = $preQuery->select('MonsterId')->distinct();
         $monQuery = Monsters::query()
-            ->joinSub($preQuery, 'MonsterAttributes',
+            ->leftJoinSub($preQuery, 'MonsterAttributes',
                 'Monsters.id', '=', 'MonsterAttributes.MonsterId');
         foreach ($orderList as $v) {
             if ($v == 'newest') {

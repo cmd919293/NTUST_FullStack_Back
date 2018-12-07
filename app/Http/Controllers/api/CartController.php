@@ -106,10 +106,15 @@ class CartController extends Controller
         $totalPrice = 0;
         foreach ($cart->get() as $item) {
             $price = 0;
-            $product = Monsters::query()
-                ->where('id', $item['ProductId'])
+            $sold = $item['Count'];
+            $mon = Monsters::query()
+                ->where('id', $item['ProductId']);
+            $product = $mon
                 ->select(DB::raw('CEIL(`price` * `discount` / 100) as discounted'))
                 ->get();
+            $mon->update([
+                'sold' => DB::raw("`sold` + $sold")
+            ]);
             if ($product->isNotEmpty()) {
                 $price = $product[0]['discounted'];
             }
@@ -124,11 +129,11 @@ class CartController extends Controller
             $totalPrice += $price * $item['Count'];
         }
         $cart->delete();
-        foreach($request['Coupons'] as $CouponId) {
+        foreach ($request['Coupons'] as $CouponId) {
             $coupon = Coupon::query()
                 ->where('id', '=', $CouponId)
                 ->where('UserId', '=', $Uid)
-                ->where('Used','=',false)
+                ->where('Used', '=', false)
                 ->whereDate('expired_at', '>=', $order['created_at'])
                 ->get();
 

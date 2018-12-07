@@ -144,12 +144,6 @@ class MonsterController extends Controller
             ], 400);
         }
 
-        //Insert New Monster
-        MonsterName::query()->create([
-            'NAME' => $request['NAME'],
-            'NAME_EN' => $request['NAME_EN'],
-            'NAME_JP' => $request['NAME_JP']
-        ]);
         $newRow = Monsters::query()->create([
             'imgNum' => count($images),
             'HP' => $request['HP'],
@@ -163,6 +157,13 @@ class MonsterController extends Controller
             'description' => $request['description'],
         ]);
         $monId = $newRow['id'];
+        //Insert New Monster
+        MonsterName::query()->create([
+            'id' => $monId,
+            'NAME' => $request['NAME'],
+            'NAME_EN' => $request['NAME_EN'],
+            'NAME_JP' => $request['NAME_JP']
+        ]);
         $arr = AttributeName::query()->whereIn('id', $request['attributes'])
             ->select('id')->get()->toArray();
 

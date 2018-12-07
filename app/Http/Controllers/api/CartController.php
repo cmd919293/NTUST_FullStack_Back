@@ -103,6 +103,7 @@ class CartController extends Controller
             'Address' => $request['Address'],
         ]);
         $id = $order['id'];
+        $totalPrice = 0;
         foreach ($cart->get() as $item) {
             $price = 0;
             $product = Monsters::query()
@@ -119,18 +120,26 @@ class CartController extends Controller
                     'Count' => $item['Count'],
                     'Price' => $price
                 ]);
+
+            $totalPrice += $price;
         }
         $cart->delete();
         foreach($request['Coupons'] as $CouponId) {
-            Coupon::query()
+            $coupon = Coupon::query()
                 ->where('id', '=', $CouponId)
                 ->where('UserId', '=', $Uid)
                 ->where('Used','=',false)
                 ->whereDate('expired_at', '>=', $order['created_at'])
-                ->update([
+                ->get();
+
+            if ($coupon->isNotEmpty() && $totalPrice - $coupon[0]['Discount'] >= 0) {
+                $coupon->update([
                     'OrderId' => $id,
                     'Used' => true
                 ]);
+
+                $totalPrice -= $coupon['Discount'];
+            }
         }
         return response()->json([
             'status' => true,

@@ -344,7 +344,7 @@ class MonsterController extends Controller
     {
         $raw = DB::raw("search_monster(\"$name\", `NAME`)");
         $mon = MonsterName::query()->where($raw, '>', 0)
-            ->orderBy($raw)
+            ->orderBy($raw, 'desc')
             ->join('Monsters', 'MonsterName.id', '=', 'Monsters.id')
             ->get();
         return $this->makeResponse($mon);
